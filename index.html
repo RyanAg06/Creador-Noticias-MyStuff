@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <title>MyStuff Editor</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./css/elementos.css">
+    </head>
+
+
+    <body>
+
+        <!-- Titulo Superior -->
+        <p class="titulo">Editor MyStuff</p>
+
+        <!-- Contenido -->
+        <article id="contenido">
+
+            <!-- Elementos -->
+            <section id="elementos">
+                <p class="titulo">Elementos Disponibles</p>
+
+                <!-- Lista Elementos -->
+                <ul class="lista_elementos">
+                    <li class="item" id="imagen_tarjeta" draggable="true">Imagen</li>
+                    <li class="item" id="titulo_tarjeta" draggable="true">Titulo</li>
+                    <li class="item" id="minititulo_tarjeta" draggable="true">Minititulo</li>
+                    <li class="item" id="subtitulo_tarjeta" draggable="true">Subtitulo</li>
+                    <li class="item" id="parrafo_tarjeta" draggable="true">Parrafo</li>
+                    <li class="item" id="slider_tarjeta" draggable="true">Slider</li>
+                    <li class="item" id="lista_tarjeta" draggable="true">Lista</li>
+                    <li>
+                        <ul class="lista_botones">
+                            <li class="item" id="boton_visitar" draggable="true">Boton Visitar</li>
+                            <li class="item" id="boton_descargar" draggable="true">Boton Descargar</li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </section>
+
+            <!-- Editor -->
+            <section id="editor">
+
+                <!-- Panel Superior -->
+                <div class="configuracion_extra">
+                    <p class="titulo">Zona de Edicion</p>
+                    <div>
+                        <button class="centrar_titulos">Centrar Titulos</button>
+                        <button class="modo_vertical">Modo Vertical</button>
+                    </div>
+                </div>
+
+                <!-- Titulos -->
+                <div class="titulos_tarjeta">
+                    <p class="titulo_tarjeta">Titulo Principal</p>
+                    <p class="subtitulo_pagina">Subtitulo Pagina</p>
+                </div>
+
+                <!-- Contenido Agregado -->
+                <div id="canvas">
+                    Arrastra elementos aqui dentro...
+                </div>
+
+            </section>
+
+            <!-- HTML Generado -->
+            <section id="html_generado">
+                <p class="titulo">Vista Previa del HTML</p>
+                <div class="html">html</div>
+            </section>
+
+        </article>
+
+        <!-- HTML Generado -->
+        <div id="html_generado"></div>
+    </body>
+
+    <!-- Codigo JS -->
+    <script>
+
+        /*
+            8-noviembre-25
+            fui al servicio sesion no 41, corri, hicimos una carne asada y fui al bazar
+        */
+
+        // Variables
+        let items = document.querySelectorAll(".item")
+        let canva = document.getElementById("canvas")
+        let id = ""
+        let selected = ""
+
+        items.forEach(item=> // Recorrer Elementos
+        {
+            item.addEventListener("dragstart", e=>
+            {
+                selected = e.target
+                item.classList.add("dragging") // Agregar Clase "dragging"
+                id = item.getAttribute("id") // Obtener ID
+            })
+
+            item.addEventListener("dragend", e=>
+            {
+                item.classList.remove("dragging") // Eliminar Clase "dragging"
+            })
+        })
+
+        canva.addEventListener("dragover", e=>
+        {
+            e.preventDefault() // Prevenir Comportamiento Predeterminado
+        })
+
+        
+        canva.addEventListener("drop",()=>
+        {
+            console.log(id) // Imprimir ID
+
+            switch(id) // Evaluar ID y Agregar Contenido
+            {
+                case "imagen_tarjeta":
+
+                    // Contenedor Principal
+                    contenedor_imagen = document.createElement("div")
+                    contenedor_imagen.classList.add("tarjeta__imagenes")
+
+                    // Preguntar URL
+                    imagen = document.createElement("img")
+                    imagen.alt = "Imagen"
+                    imagen.src = prompt("Ingresa la URL")
+                    contenedor_imagen.appendChild(imagen)
+
+                    // Preguntar Etiqueta (Opcional)
+                    etiqueta = document.createElement("p")
+                    etiqueta.classList.add("etiqueta__titulo")
+                    etiqueta.textContent = prompt("Ingrese una Etiqueta, Vacio para Omitir")
+                    if (etiqueta.getAttribute("text") == null)
+                    {
+                        alert("Etiqueta Omitida")
+                    }
+                    else
+                    {
+                        contenedor_etiqueta = document.createElement("div")
+                        contenedor_etiqueta.classList.add("etiqueta")
+                        contenedor_etiqueta.appendChild(etiqueta)
+                        contenedor_imagen.appendChild(contenedor_etiqueta)
+                    }
+                    canva.appendChild(contenedor_imagen)
+                    break
+                case "titulo_tarjeta":
+                    alert("titulo")
+                    break
+            }
+        })
+
+    </script>
+
+</html>
