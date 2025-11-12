@@ -1,7 +1,7 @@
 * {
     text-decoration: none;
     font-family: "arial";
-    font-size: 1em;
+    font-size: 1rem;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -9,48 +9,93 @@
     scroll-behavior: smooth;
 }
 
-.titulo {
+/* Titulo "Editor MyStuff" */
+.titulo_superior {
     text-align: center;
 }
 
+/* Secciones */
 #contenido {
     display: flex;
 }
 
-#elementos {
+/* Panel Izquierdo */
+#panel_elementos {
     background-color: red;
-    min-width: 20em;
+    min-width: 20rem;
 }
 .lista_elementos .item {
     cursor: grab;
-    padding: 0.7em;
+    padding: 0.7rem;
     margin: 0.5rem;
-    opacity: 1;
 }
 .lista_elementos .item:hover {
     background-color: yellow;
     cursor: grab;
-    padding: 0.7em;
+    padding: 0.7rem;
 }
 .lista_elementos .item.dragging {
     background-color: yellow;
-    opacity: 0.7;
+}
+.botones_extras {
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem;
+}
+.botones_extras button {
+    display: block;
+    margin: 0.1em;
+    padding: 0.2rem;
 }
 
-#editor {
+/* Panel Central */
+#panel_editor {
     background-color: green;
     width: 100%;
 }
-.configuracion_extra {
+#panel_editor .titulos_superiores .titulo {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+#panel_editor .configuracion_tarjetas {
     display: flex;
     justify-content: space-between;
 }
 #canvas {
+    padding: 1rem;
     background-color: purple;
-    height: 20em;
+    min-height: 20rem;
+    height: fit-content;
 }
 
-#html_generado {
+/* Tarjeta */
+#canvas .tarjeta {
+    background-color: cornflowerblue;
+    margin: 1rem 0;
+    min-height: 10rem;
+}
+#canvas .tarjeta.activa {
+    border: #eee dotted 0.2rem;
+}
+
+/* Bloques Dentro del Canva */
+#canvas .bloque {
+    display: block;
+    padding: 0.5rem;
+}
+#canvas .tarjeta.activa .bloque {
+    cursor: move;
+}
+#canvas .tarjeta.activa .bloque:hover {
+    background-color: #fff;
+}
+
+/* Panel Derecho */
+#panel_html_generado {
     background-color: blue;
-    min-width: 20em;
+    width: 0;
+}
+#panel_html_generado.show {
+    min-width: 20rem;
 }

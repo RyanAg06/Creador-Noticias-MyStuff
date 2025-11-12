@@ -12,16 +12,18 @@
     <body>
 
         <!-- Titulo Superior -->
-        <p class="titulo">Editor MyStuff</p>
+        <p class="titulo_superior">Editor MyStuff</p>
 
         <!-- Contenido -->
         <article id="contenido">
 
-            <!-- Elementos -->
-            <section id="elementos">
+            <!-- Panel Elementos -->
+            <section id="panel_elementos">
+
+                <!-- Titulo Elementos Disponibles -->
                 <p class="titulo">Elementos Disponibles</p>
 
-                <!-- Lista Elementos -->
+                <!-- Elementos Arrastrables -->
                 <ul class="lista_elementos">
                     <li class="item" id="imagen_tarjeta" draggable="true">Imagen</li>
                     <li class="item" id="titulo_tarjeta" draggable="true">Titulo</li>
@@ -31,20 +33,29 @@
                     <li class="item" id="slider_tarjeta" draggable="true">Slider</li>
                     <li class="item" id="lista_tarjeta" draggable="true">Lista</li>
                     <li>
-                        <ul class="lista_botones">
+                        <ul class="lista_elementos lista_botones">
                             <li class="item" id="boton_visitar" draggable="true">Boton Visitar</li>
                             <li class="item" id="boton_descargar" draggable="true">Boton Descargar</li>
                         </ul>
                     </li>
-                </ul>
+                </ul>`
+
+                <!-- Opciones Extra -->
+                <div class="botones_extras">
+                    <button id="agregar_tarjeta">Crear Tarjeta</button>
+                    <button id="cargar_html">Cargar HTML</button>
+                    <button id="reordenar_tarjetas">Reordenar Tarjetas</button>
+                    <button id="previsualizar_html">Previsualizar HTML</button>
+                    <button id="descargar_html">Descargar HTML</button>
+                </div>
 
             </section>
 
-            <!-- Editor -->
-            <section id="editor">
+            <!-- Panel Editor -->
+            <section id="panel_editor">
 
-                <!-- Panel Superior -->
-                <div class="configuracion_extra">
+                <!-- Configuracion Tarjetas -->
+                <div class="configuracion_tarjetas">
                     <p class="titulo">Zona de Edicion</p>
                     <div>
                         <button class="centrar_titulos">Centrar Titulos</button>
@@ -52,21 +63,26 @@
                     </div>
                 </div>
 
-                <!-- Titulos -->
-                <div class="titulos_tarjeta">
-                    <p class="titulo_tarjeta">Titulo Principal</p>
-                    <p class="subtitulo_pagina">Subtitulo Pagina</p>
+                <!-- Titulos Superiores -->
+                <div class="titulos_superiores">
+                    <div class="titulo">
+                        <p class="titulo_tarjeta">Titulo Principal</p>
+                        <button class="editar_titulo">Editar</button>
+                    </div>
+                    <div class="titulo">
+                        <p class="subtitulo_pagina">Subtitulo Pagina</p>
+                        <button class="editar_subtitulo">Editar</button>
+                    </div>
                 </div>
 
-                <!-- Contenido Agregado -->
+                <!-- Canvas -->
                 <div id="canvas">
-                    Arrastra elementos aqui dentro...
+                    <p class="placeholder_canva">Crea una Tarjeta Primero...</p>
                 </div>
-
             </section>
 
-            <!-- HTML Generado -->
-            <section id="html_generado">
+            <!-- Panel HTML Generado -->
+            <section id="panel_html_generado">
                 <p class="titulo">Vista Previa del HTML</p>
                 <div class="html">html</div>
             </section>
@@ -78,81 +94,6 @@
     </body>
 
     <!-- Codigo JS -->
-    <script>
-
-        /*
-            8-noviembre-25
-            fui al servicio sesion no 41, corri, hicimos una carne asada y fui al bazar
-        */
-
-        // Variables
-        let items = document.querySelectorAll(".item")
-        let canva = document.getElementById("canvas")
-        let id = ""
-        let selected = ""
-
-        items.forEach(item=> // Recorrer Elementos
-        {
-            item.addEventListener("dragstart", e=>
-            {
-                selected = e.target
-                item.classList.add("dragging") // Agregar Clase "dragging"
-                id = item.getAttribute("id") // Obtener ID
-            })
-
-            item.addEventListener("dragend", e=>
-            {
-                item.classList.remove("dragging") // Eliminar Clase "dragging"
-            })
-        })
-
-        canva.addEventListener("dragover", e=>
-        {
-            e.preventDefault() // Prevenir Comportamiento Predeterminado
-        })
-
-        
-        canva.addEventListener("drop",()=>
-        {
-            console.log(id) // Imprimir ID
-
-            switch(id) // Evaluar ID y Agregar Contenido
-            {
-                case "imagen_tarjeta":
-
-                    // Contenedor Principal
-                    contenedor_imagen = document.createElement("div")
-                    contenedor_imagen.classList.add("tarjeta__imagenes")
-
-                    // Preguntar URL
-                    imagen = document.createElement("img")
-                    imagen.alt = "Imagen"
-                    imagen.src = prompt("Ingresa la URL")
-                    contenedor_imagen.appendChild(imagen)
-
-                    // Preguntar Etiqueta (Opcional)
-                    etiqueta = document.createElement("p")
-                    etiqueta.classList.add("etiqueta__titulo")
-                    etiqueta.textContent = prompt("Ingrese una Etiqueta, Vacio para Omitir")
-                    if (etiqueta.getAttribute("text") == null)
-                    {
-                        alert("Etiqueta Omitida")
-                    }
-                    else
-                    {
-                        contenedor_etiqueta = document.createElement("div")
-                        contenedor_etiqueta.classList.add("etiqueta")
-                        contenedor_etiqueta.appendChild(etiqueta)
-                        contenedor_imagen.appendChild(contenedor_etiqueta)
-                    }
-                    canva.appendChild(contenedor_imagen)
-                    break
-                case "titulo_tarjeta":
-                    alert("titulo")
-                    break
-            }
-        })
-
-    </script>
+    <script src="./js/editor.js"></script>
 
 </html>
