@@ -5,12 +5,14 @@ const panel_html_generado = document.querySelector("#panel_html_generado")
 btn_previsualizar_html.addEventListener("click", () =>
 {
     panel_html_generado.classList.toggle("show")
-    btn_previsualizar_html.textContent = (panel_html_generado.getAttribute("class") == "show") ? "Ocultar HTML" : "Previsualizar HTML"
+    btn_previsualizar_html.textContent = (panel_html_generado.getAttribute("class") == "show") ? "🚫Ocultar HTML" : "⭕Previsualizar HTML"
 })
 
 /* === Crear Tarjeta === */
 const canva = document.querySelector("#canva")
 const btn_crear_tarjeta = document.querySelector("#crear_tarjeta")
+let tarjeta_activa = null
+
 btn_crear_tarjeta.addEventListener("click", e =>
 {
     // Eliminar Placeholder si Existe
@@ -29,7 +31,7 @@ btn_crear_tarjeta.addEventListener("click", e =>
     tarjeta_nueva.appendChild(placeholder_tarjeta)
     activar_tarjeta(tarjeta_nueva)
 
-    // Agrego Listener
+    // Agrego Listeners
     tarjeta_nueva.addEventListener("click", e =>
     {
         // Desactivar Tarjetas Anteriores
@@ -39,6 +41,26 @@ btn_crear_tarjeta.addEventListener("click", e =>
         // Activar Tarjeta
         activar_tarjeta(tarjeta_nueva)
     })
+    tarjeta_nueva.addEventListener("dragstart", () => tarjeta_nueva.classList.add(".block_dragging"))
+    tarjeta_nueva.addEventListener("dragend", () => tarjeta_nueva.classList.remove(".block_dragging"))
+    tarjeta_nueva.addEventListener("dragover", e =>
+    {
+        e.preventDefault();
+        const bloque_activo = document.querySelector(".block_dragging");
+        if (!bloque_activo) return;
+    
+        const posicion_nueva = calcular_reordenamiento(tarjeta_activa, e.clientY);
+        if (posicion_nueva == null)
+        {
+            tarjeta_activa.appendChild(bloque_activo)
+            console.log("igual")
+        }
+        else
+        {
+            tarjeta_activa.insertBefore(bloque_activo, posicion_nueva)
+            console.log("cambiado")
+        }
+    })
 
     // Agregar Dentro de Canva
     canva.appendChild(tarjeta_nueva)
@@ -46,9 +68,10 @@ btn_crear_tarjeta.addEventListener("click", e =>
 
 function activar_tarjeta(tarjeta)
 {
-    tarjeta.classList.add("activa")
-    tarjeta.setAttribute("draggable", "true")
-    tarjeta.querySelector(".placeholder_tarjeta").textContent = "📌Suelta Elementos Aqui Dentro"
+    tarjeta_activa = tarjeta
+    tarjeta_activa.classList.add("activa")
+    tarjeta_activa.setAttribute("draggable", "true")
+    tarjeta_activa.querySelector(".placeholder_tarjeta").textContent = "📌Suelta Elementos Aqui Dentro"
 }
 function desactivar_tarjetas_anteriores()
 {
@@ -62,7 +85,7 @@ function desactivar_tarjetas_anteriores()
 
 /* === Sistema de Drag and Drop === */
 
-// Drag and Drop: Reordenar Tarjeta
+// Drag and Drop: Reordenar Tarjetas
 
 
 function calcular_reordenamiento(container, y)
