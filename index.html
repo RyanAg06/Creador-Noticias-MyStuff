@@ -1,27 +1,99 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Editor de Noticias</title>
-  <link rel="stylesheet" href="css/elementos.css">
-</head>
-<body>
-  <div class="editor">
-    <aside class="panel">
-      <h3>Elementos Disponibles</h3>
-      <div id="elementos">
-        <div class="item" draggable="true" data-type="titulo">Título</div>
-        <div class="item" draggable="true" data-type="parrafo">Párrafo</div>
-        <div class="item" draggable="true" data-type="imagen">Imagen</div>
-      </div>
-    </aside>
 
-    <main id="canvas" class="canvas">
-      <p class="placeholder">Arrastra aquí tus elementos</p>
-    </main>
-  </div>
+    <head>
+        <title>MyStuff Editor</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./css/elementos.css">
+    </head>
 
-  <script src="js/templates.js"></script>
-  <script src="js/editor.js"></script>
-</body>
+
+    <body>
+
+        <!-- Titulo Superior -->
+        <p class="titulo_superior">Editor MyStuff</p>
+
+        <!-- Contenido -->
+        <div id="contenido">
+
+            <!-- Panel Elementos -->
+            <div id="panel_elementos">
+
+                <!-- Titulo Elementos Disponibles -->
+                <p class="titulo">Elementos Disponibles</p>
+
+                <!-- Elementos Arrastrables -->
+                <ul class="lista_elementos">
+                    <li class="item" id="imagen_tarjeta" draggable="true">Imagen</li>
+                    <li class="item" id="titulo_tarjeta" draggable="true">Titulo</li>
+                    <li class="item" id="minititulo_tarjeta" draggable="true">Minititulo</li>
+                    <li class="item" id="subtitulo_tarjeta" draggable="true">Subtitulo</li>
+                    <li class="item" id="parrafo_tarjeta" draggable="true">Parrafo</li>
+                    <li class="item" id="slider_tarjeta" draggable="true">Slider</li>
+                    <li class="item" id="lista_tarjeta" draggable="true">Lista</li>
+                    <li>
+                        <ul class="lista_elementos lista_botones">
+                            <li class="item" id="boton_visitar" draggable="true">Boton Visitar</li>
+                            <li class="item" id="boton_descargar" draggable="true">Boton Descargar</li>
+                        </ul>
+                    </li>
+                </ul>`
+
+                <!-- Opciones Extra -->
+                <div class="botones_extras">
+                    <button id="crear_tarjeta">Crear Tarjeta</button>
+                    <button id="cargar_html">Cargar HTML</button>
+                    <button id="reordenar_tarjetas">Reordenar Tarjetas</button>
+                    <button id="previsualizar_html">Previsualizar HTML</button>
+                    <button id="descargar_html">Descargar HTML</button>
+                </div>
+
+            </div>
+
+            <!-- Panel Editor -->
+            <div id="panel_editor">
+
+                <!-- Configuracion Tarjetas -->
+                <div class="configuracion_tarjetas">
+                    <p class="titulo">Zona de Edicion</p>
+                    <div>
+                        <button class="centrar_titulos">Centrar Titulos</button>
+                        <button class="modo_vertical">Modo Vertical</button>
+                    </div>
+                </div>
+
+                <!-- Titulos Superiores -->
+                <div class="titulos_superiores">
+                    <div class="titulo">
+                        <p class="titulo_tarjeta">Titulo Principal</p>
+                        <button class="editar_titulo">Editar</button>
+                    </div>
+                    <div class="titulo">
+                        <p class="subtitulo_pagina">Subtitulo Pagina</p>
+                        <button class="editar_subtitulo">Editar</button>
+                    </div>
+                </div>
+
+                <!-- Canva -->
+                <div id="canva">
+                    <p class="placeholder_canva">Crea una Tarjeta Primero...</p>
+                </div>
+            </div>
+
+            <!-- Panel HTML Generado -->
+            <div id="panel_html_generado">
+                <p class="titulo">Vista Previa del HTML</p>
+                <div class="html">html</div>
+            </div>
+
+        </div>
+
+        <!-- HTML Generado -->
+        <div id="html_generado"></div>
+    </body>
+
+    <!-- Codigo JS -->
+    <script src="./js/editor.js"></script>
+
 </html>
