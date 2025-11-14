@@ -159,14 +159,14 @@ function activar_tarjeta(tarjeta)
 {
     tarjeta.classList.add("activa")
     tarjeta.setAttribute("draggable", "true")
-    tarjeta.querySelector(".placeholder_tarjeta").textContent = "📌Suelta Elementos Aqui Dentro"
+    if (tarjeta.querySelector(".placeholder_tarjeta")) tarjeta.querySelector(".placeholder_tarjeta").textContent = "📌Suelta Elementos Aqui Dentro"
 }
 function desactivar_tarjetas_anteriores()
 {
     canva.querySelectorAll(".tarjeta").forEach(tarjeta =>
     {
         tarjeta.classList.remove("activa")
-        tarjeta.querySelector(".placeholder_tarjeta").textContent = "🔒Tarjeta Inactiva"
+        if (tarjeta.querySelector(".placeholder_tarjeta")) tarjeta.querySelector(".placeholder_tarjeta").textContent = "🔒Tarjeta Inactiva"
         tarjeta.setAttribute("draggable", "false")
     });
 }
