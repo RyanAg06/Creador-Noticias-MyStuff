@@ -25,17 +25,19 @@
 
                 <!-- Elementos Arrastrables -->
                 <ul class="lista_elementos">
-                    <li class="item" id="imagen_tarjeta" draggable="true">Imagen</li>
-                    <li class="item" id="titulo_tarjeta" draggable="true">Titulo</li>
-                    <li class="item" id="minititulo_tarjeta" draggable="true">Minititulo</li>
-                    <li class="item" id="subtitulo_tarjeta" draggable="true">Subtitulo</li>
-                    <li class="item" id="parrafo_tarjeta" draggable="true">Parrafo</li>
-                    <li class="item" id="slider_tarjeta" draggable="true">Slider</li>
-                    <li class="item" id="lista_tarjeta" draggable="true">Lista</li>
+                    <p class="label_items">Items</p>
+                    <li class="item" data-type="imagen" draggable="true">Imagen</li>
+                    <li class="item" data-type="titulo" draggable="true">Titulo</li>
+                    <li class="item" data-type="minititulo" draggable="true">Minititulo</li>
+                    <li class="item" data-type="subtitulo" draggable="true">Subtitulo</li>
+                    <li class="item" data-type="parrafo" draggable="true">Parrafo</li>
+                    <li class="item" data-type="slider" draggable="true">Slider</li>
+                    <li class="item" data-type="lista" draggable="true">Lista</li>
                     <li>
                         <ul class="lista_elementos lista_botones">
-                            <li class="item" id="boton_visitar" draggable="true">Boton Visitar</li>
-                            <li class="item" id="boton_descargar" draggable="true">Boton Descargar</li>
+                            <p class="label_items">Botones</p>
+                            <li class="item" data-type="boton_visitar" draggable="true">Boton Visitar</li>
+                            <li class="item" data-type="boton_descargar" draggable="true">Boton Descargar</li>
                         </ul>
                     </li>
                 </ul>`
@@ -45,7 +47,7 @@
                     <button id="crear_tarjeta">➕Crear Tarjeta</button>
                     <button id="cargar_html">Cargar HTML</button>
                     <button id="reordenar_tarjetas">Reordenar Tarjetas</button>
-                    <button id="previsualizar_html">⭕Previsualizar HTML</button>
+                    <button id="previsualizar_html">👁️Previsualizar HTML</button>
                     <button id="descargar_html">Descargar HTML</button>
                 </div>
 
@@ -54,23 +56,22 @@
             <!-- Panel Editor -->
             <div id="panel_editor">
 
-                <!-- Configuracion Tarjetas -->
                 <div class="configuracion_tarjetas">
                     <p class="titulo">Zona de Edicion</p>
-                    <div>
-                        <button class="centrar_titulos">Centrar Titulos</button>
-                        <button class="modo_vertical">Modo Vertical</button>
+                    <div class="botones-config">
+                        <button id="centrar_titulos">↔️Centrar Titulos</button>
+                        <button id="modo_vertical">↕️Modo Vertical</button>
                     </div>
                 </div>
 
                 <!-- Titulos Superiores -->
                 <div class="titulos_superiores">
-                    <div class="titulo">
+                    <div class="titulo-container">
                         <p class="titulo_tarjeta">Titulo Principal</p>
                         <button class="editar_titulo">Editar</button>
                     </div>
-                    <div class="titulo">
-                        <p class="subtitulo_pagina">Subtitulo Pagina</p>
+                    <div class="titulo-container">
+                        <p class="subtitulo_tarjeta">Subtitulo Pagina</p>
                         <button class="editar_subtitulo">Editar</button>
                     </div>
                 </div>

@@ -5,16 +5,44 @@ const panel_html_generado = document.querySelector("#panel_html_generado")
 btn_previsualizar_html.addEventListener("click", () =>
 {
     panel_html_generado.classList.toggle("show")
-    btn_previsualizar_html.textContent = (panel_html_generado.getAttribute("class") == "show") ? "🚫Ocultar HTML" : "⭕Previsualizar HTML"
+    btn_previsualizar_html.textContent = (panel_html_generado.getAttribute("class") == "show") ? "🚫Ocultar HTML" : "👁️Previsualizar HTML"
 })
+
+
+
+
+
+
+
+
+/* === Botones Zona Edicion === */
+const btn_centrar_titulos = document.querySelector("#centrar_titulos")
+btn_centrar_titulos.addEventListener("click", () =>
+{
+    btn_centrar_titulos.classList.toggle("centrados")
+    btn_centrar_titulos.textContent = (btn_centrar_titulos.classList.contains("centrados") ? "⬅️Lado Izquierdo" : "↔️Centrar Titulos")
+})
+const btn_modo_vertical = document.querySelector("#modo_vertical")
+btn_modo_vertical.addEventListener("click", () =>
+{
+    btn_modo_vertical.classList.toggle("vertical")
+    btn_modo_vertical.textContent = (btn_modo_vertical.classList.contains("vertical") ? "📔Modo Cuadricula" : "↕️Modo Vertical")
+})
+
+
+
+
+
+
+
 
 /* === Crear Tarjeta === */
 const canva = document.querySelector("#canva")
 const btn_crear_tarjeta = document.querySelector("#crear_tarjeta")
-let tarjeta_activa = null
-
 btn_crear_tarjeta.addEventListener("click", e =>
 {
+    e.stopPropagation()
+
     // Eliminar Placeholder si Existe
     if (canva.querySelector(".placeholder_canva")) canva.querySelector(".placeholder_canva").remove()
 
@@ -25,7 +53,7 @@ btn_crear_tarjeta.addEventListener("click", e =>
     const tarjeta_nueva = document.createElement("section")
     tarjeta_nueva.classList.add("tarjeta")
 
-    // Agregar Placeholder a Tarjeta Nueva y Activarla
+    // Agregar Placeholder a Tarjeta Nueva y Activarla !!! CORREGIR ENTRAR MOUSE
     const placeholder_tarjeta = document.createElement("p")
     placeholder_tarjeta.classList.add("placeholder_tarjeta")
     tarjeta_nueva.appendChild(placeholder_tarjeta)
@@ -34,44 +62,104 @@ btn_crear_tarjeta.addEventListener("click", e =>
     // Agrego Listeners
     tarjeta_nueva.addEventListener("click", e =>
     {
-        // Desactivar Tarjetas Anteriores
         e.stopPropagation();
         desactivar_tarjetas_anteriores()
-
-        // Activar Tarjeta
         activar_tarjeta(tarjeta_nueva)
     })
-    tarjeta_nueva.addEventListener("dragstart", () => tarjeta_nueva.classList.add(".block_dragging"))
-    tarjeta_nueva.addEventListener("dragend", () => tarjeta_nueva.classList.remove(".block_dragging"))
+    tarjeta_nueva.addEventListener("dragstart", e =>
+    {
+        e.stopPropagation()
+        tarjeta_nueva.classList.add(".tarjeta_dragging")
+    })
+    tarjeta_nueva.addEventListener("dragleave", e =>
+    {
+        e.stopPropagation()
+        tarjeta_nueva.classList.remove("tarjeta_hover")
+    })
+    tarjeta_nueva.addEventListener("dragend", e =>
+    {
+        e.stopPropagation()
+        tarjeta_nueva.classList.remove(".tarjeta_dragging")
+    })
     tarjeta_nueva.addEventListener("dragover", e =>
     {
-        e.preventDefault();
-        const bloque_activo = document.querySelector(".block_dragging");
-        if (!bloque_activo) return;
-    
-        const posicion_nueva = calcular_reordenamiento(tarjeta_activa, e.clientY);
-        if (posicion_nueva == null)
+        e.stopPropagation()
+        e.preventDefault()
+        if (tarjeta_nueva.classList.contains("activa") && tipo_elemento) tarjeta_nueva.classList.add("tarjeta_hover")
+    })
+    tarjeta_nueva.addEventListener("drop", e =>
+    {
+        e.stopPropagation()
+
+        // Eliminar Clase
+        tarjeta_nueva.classList.remove("tarjeta_hover")
+
+        // Solo Permitir Agregar Elementos si Esta Activa Y Es un Elemento
+        if (tarjeta_nueva.classList.contains("activa") && tipo_elemento)
         {
-            tarjeta_activa.appendChild(bloque_activo)
-            console.log("igual")
-        }
-        else
-        {
-            tarjeta_activa.insertBefore(bloque_activo, posicion_nueva)
-            console.log("cambiado")
+            switch (tipo_elemento)
+            {
+                case "imagen":
+                {
+                    console.log("Imagen agregado")
+                    break
+                }
+                case "titulo":
+                {
+                    console.log("Titulo agregado")
+                    break
+                }
+                case "minititulo":
+                {
+                    console.log("Minititulo agregado")
+                    break
+                }
+                case "subtitulo":
+                {
+                    console.log("Subtitulo agregado")
+                    break
+                }
+                case "parrafo":
+                {
+                    console.log("Parrafo agregado")
+                    break
+                }
+                case "slider":
+                {
+                    console.log("Slider agregado")
+                    break
+                }
+                case "lista":
+                {
+                    console.log("Lista agregado")
+                    break
+                }
+                case "boton_visitar":
+                {
+                    console.log("Boton Visitar agregado")
+                    break
+                }
+                case "boton_descargar":
+                {
+                    console.log("Boton Descargar agregado")
+                    break
+                }
+                default:
+                {
+                    console.log("Elemento Desconocido")
+                }
+            }
         }
     })
 
     // Agregar Dentro de Canva
     canva.appendChild(tarjeta_nueva)
 })
-
 function activar_tarjeta(tarjeta)
 {
-    tarjeta_activa = tarjeta
-    tarjeta_activa.classList.add("activa")
-    tarjeta_activa.setAttribute("draggable", "true")
-    tarjeta_activa.querySelector(".placeholder_tarjeta").textContent = "📌Suelta Elementos Aqui Dentro"
+    tarjeta.classList.add("activa")
+    tarjeta.setAttribute("draggable", "true")
+    tarjeta.querySelector(".placeholder_tarjeta").textContent = "📌Suelta Elementos Aqui Dentro"
 }
 function desactivar_tarjetas_anteriores()
 {
@@ -83,28 +171,53 @@ function desactivar_tarjetas_anteriores()
     });
 }
 
-/* === Sistema de Drag and Drop === */
-
-// Drag and Drop: Reordenar Tarjetas
 
 
-function calcular_reordenamiento(container, y)
+
+
+
+
+
+
+
+
+/* === Drag and Drop: Agregar Elementos Dentro de Tarjetas == */
+const elementos = document.querySelectorAll(".item")
+let tipo_elemento = null
+elementos.forEach(item =>
 {
-    // Obtenemos todos los elementos hijos del contenedor que tienen la clase "bloque"
-    // y que NO están siendo arrastrados actualmente (no tienen la clase "block_dragging").
-    const draggableElements = [...container.querySelectorAll(".bloque:not(.block_dragging)")]
+    // Obtener "data_type" del Elemento Tomado
+    item.addEventListener("dragstart", e =>
+    {
+        e.stopPropagation()
+        tipo_elemento = item.dataset.type
+    })
+    item.addEventListener("dragend", e =>
+    {
+        e.stopPropagation()
+        tipo_elemento = null
+    })
+})
 
-    // Usamos reduce para encontrar el elemento más cercano a la posición 'y' del mouse,
-    // pero sólo entre los elementos que están *antes* de la posición 'y' (offset < 0).
-    // Para cada elemento, calculamos el 'offset', que es la distancia vertical entre
-    // el centro del elemento y la posición 'y' (positivo debajo, negativo arriba).
-    // Guardamos el mayor valor de offset negativo (el más cercano por arriba a 'y').
+
+
+
+
+
+
+
+
+
+
+
+/* === Drag and Drop: Reordenamiento Tarjetas === */
+function reordenamiento_tarjetas(container, y)
+{
+    const draggableElements = [...container.querySelectorAll(".bloque:not(.tarjeta_dragging)")]
     return draggableElements.reduce((closest, child) =>
     {
         const box = child.getBoundingClientRect()
         const offset = y - box.top - box.height / 2
-        // Si el offset es negativo (el mouse está por encima del centro del elemento)
-        // y es el que más se acerca a 0, actualizamos el "closest".
         if (offset < 0 && offset > closest.offset) return { offset: offset, element: child }
         else return closest
     }, { offset: Number.NEGATIVE_INFINITY }).element
