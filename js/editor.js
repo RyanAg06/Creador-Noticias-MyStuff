@@ -1,187 +1,321 @@
 
 /* === Mostrar/Ocultar HTML Generado === */
-// Variables
 const btn_previsualizar_html = document.querySelector("#previsualizar_html")
 const panel_html_generado = document.querySelector("#panel_html_generado")
-let tarjeta_activa = ""
-
 btn_previsualizar_html.addEventListener("click", () =>
 {
     panel_html_generado.classList.toggle("show")
-    btn_previsualizar_html.textContent = (panel_html_generado.getAttribute("class") == "show") ? "Ocultar HTML" : "Previsualizar HTML"
+    btn_previsualizar_html.textContent = (panel_html_generado.getAttribute("class") == "show") ? "🚫Ocultar HTML" : "👁️Previsualizar HTML"
 })
+
+
+
+
+
+
+
+
+/* === Botones Zona Edicion === */
+const btn_centrar_titulos = document.querySelector("#centrar_titulos")
+btn_centrar_titulos.addEventListener("click", () =>
+{
+    btn_centrar_titulos.classList.toggle("centrados")
+    btn_centrar_titulos.textContent = (btn_centrar_titulos.classList.contains("centrados") ? "⬅️Lado Izquierdo" : "↔️Centrar Titulos")
+})
+const btn_modo_vertical = document.querySelector("#modo_vertical")
+btn_modo_vertical.addEventListener("click", () =>
+{
+    btn_modo_vertical.classList.toggle("vertical")
+    btn_modo_vertical.textContent = (btn_modo_vertical.classList.contains("vertical") ? "📔Modo Cuadricula" : "↕️Modo Vertical")
+})
+
+
+
+
+
+
+
 
 /* === Crear Tarjeta === */
-const btn_agregar_tarjeta = document.querySelector("#agregar_tarjeta")
-const canva = document.getElementById("canvas")
-btn_agregar_tarjeta.addEventListener("click", () =>
+const canva = document.querySelector("#canva")
+const btn_crear_tarjeta = document.querySelector("#crear_tarjeta")
+btn_crear_tarjeta.addEventListener("click", e =>
 {
+    e.stopPropagation()
+
+    // Eliminar Placeholder si Existe
+    if (canva.querySelector(".placeholder_canva")) canva.querySelector(".placeholder_canva").remove()
+
     // Desactivar Tarjetas Anteriores
-    const tarjetas_viejas = document.querySelectorAll(".tarjeta")
-    if (!tarjetas_viejas.length == 0)
-    {
-        tarjetas_viejas.forEach(tarjeta_recorrida =>
-        {
-            tarjeta_recorrida.classList.remove("activa")
-            tarjeta_recorrida.querySelectorAll("[draggable]").forEach(bloque => { bloque.setAttribute("draggable", "false") })
-        })
-    }
+    desactivar_tarjetas_anteriores()
 
-    // Crear Tarjeta Nueva y Activarla
-    const tarjeta_nueva = document.createElement("div")
-    tarjeta_nueva.classList.add("tarjeta", "activa")
-    tarjeta_nueva.addEventListener("click", () =>
-    {
-        // Desactivar Tarjetas
-        const tarjetas = document.querySelectorAll(".tarjeta")
-        tarjetas.forEach(tarjeta_recorrida =>
-        {
-            tarjeta_recorrida.classList.remove("activa") // Desactivar Tarjeta
-            tarjeta_recorrida.querySelectorAll("[draggable]").forEach(bloque => { bloque.setAttribute("draggable", "false") }) // Desactivar Drag en Bloques
-        })
+    // Crear Tarjeta
+    const tarjeta_nueva = document.createElement("section")
+    tarjeta_nueva.classList.add("tarjeta")
 
-        // Activar Tarjeta si dio Click
-        tarjeta_nueva.classList.toggle("activa")
-        tarjeta_activa = tarjeta_nueva
-        tarjeta_activa.querySelectorAll(".bloque").forEach(bloque => { bloque.setAttribute("draggable", "true") }) // Activar Drag en Bloques
-        comportamiento_drag_drop() // Agregar Comportamiento Drag and Drop Interno
-    })
-
-    // Agregar Placeholder Tarjeta
+    // Agregar Placeholder a Tarjeta Nueva y Activarla !!! CORREGIR ENTRAR MOUSE
     const placeholder_tarjeta = document.createElement("p")
     placeholder_tarjeta.classList.add("placeholder_tarjeta")
-    placeholder_tarjeta.textContent = "Suelta los Elementos Aqui Dentro..."
     tarjeta_nueva.appendChild(placeholder_tarjeta)
+    activar_tarjeta(tarjeta_nueva)
 
-    // Agregar Tarjeta al Canva
+    // Agrego Listeners
+    tarjeta_nueva.addEventListener("click", e =>
+    {
+        e.stopPropagation();
+        desactivar_tarjetas_anteriores()
+        activar_tarjeta(tarjeta_nueva)
+    })
+    tarjeta_nueva.addEventListener("dragstart", e =>
+    {
+        e.stopPropagation()
+        tarjeta_nueva.classList.add(".tarjeta_dragging")
+    })
+    tarjeta_nueva.addEventListener("dragleave", e =>
+    {
+        e.stopPropagation()
+        tarjeta_nueva.classList.remove("tarjeta_hover")
+    })
+    tarjeta_nueva.addEventListener("dragend", e =>
+    {
+        e.stopPropagation()
+        tarjeta_nueva.classList.remove(".tarjeta_dragging")
+    })
+    tarjeta_nueva.addEventListener("dragover", e =>
+    {
+        e.stopPropagation()
+        e.preventDefault()
+        if (tarjeta_nueva.classList.contains("activa") && tipo_elemento) tarjeta_nueva.classList.add("tarjeta_hover")
+    })
+    tarjeta_nueva.addEventListener("drop", e =>
+    {
+        e.stopPropagation()
+
+        // Eliminar Clase
+        tarjeta_nueva.classList.remove("tarjeta_hover")
+
+        // Solo Permitir Agregar Elementos si Esta Activa Y Es un Elemento
+        if (tarjeta_nueva.classList.contains("activa") && tipo_elemento)
+        {
+            switch (tipo_elemento)
+            {
+                case "imagen":
+                {
+                    console.log("Imagen agregado")
+                    break
+                }
+                case "titulo":
+                {
+                    console.log("Titulo agregado")
+                    break
+                }
+                case "minititulo":
+                {
+                    console.log("Minititulo agregado")
+                    break
+                }
+                case "subtitulo":
+                {
+                    console.log("Subtitulo agregado")
+                    break
+                }
+                case "parrafo":
+                {
+                    console.log("Parrafo agregado")
+                    break
+                }
+                case "slider":
+                {
+                    console.log("Slider agregado")
+                    break
+                }
+                case "lista":
+                {
+                    console.log("Lista agregado")
+                    break
+                }
+                case "boton_visitar":
+                {
+                    console.log("Boton Visitar agregado")
+                    break
+                }
+                case "boton_descargar":
+                {
+                    console.log("Boton Descargar agregado")
+                    break
+                }
+                default:
+                {
+                    console.log("Elemento Desconocido")
+                }
+            }
+        }
+    })
+
+    // Agregar Dentro de Canva
     canva.appendChild(tarjeta_nueva)
+})
+function activar_tarjeta(tarjeta)
+{
+    tarjeta.classList.add("activa")
+    tarjeta.setAttribute("draggable", "true")
+    tarjeta.querySelector(".placeholder_tarjeta").textContent = "📌Suelta Elementos Aqui Dentro"
+}
+function desactivar_tarjetas_anteriores()
+{
+    canva.querySelectorAll(".tarjeta").forEach(tarjeta =>
+    {
+        tarjeta.classList.remove("activa")
+        tarjeta.querySelector(".placeholder_tarjeta").textContent = "🔒Tarjeta Inactiva"
+        tarjeta.setAttribute("draggable", "false")
+    });
+}
 
-    // Eliminar Placeholder Despues de Agregar una Tarjeta
-    const placeholder_canva = canva.querySelector(".placeholder_canva")
-    if (placeholder_canva) placeholder_canva.remove()
+
+
+
+
+
+
+
+
+
+
+/* === Drag and Drop: Agregar Elementos Dentro de Tarjetas == */
+const elementos = document.querySelectorAll(".item")
+let tipo_elemento = null
+elementos.forEach(item =>
+{
+    // Obtener "data_type" del Elemento Tomado
+    item.addEventListener("dragstart", e =>
+    {
+        e.stopPropagation()
+        tipo_elemento = item.dataset.type
+    })
+    item.addEventListener("dragend", e =>
+    {
+        e.stopPropagation()
+        tipo_elemento = null
+    })
 })
 
-/* === Sistema de Drag and Drop === */
-// Variables
-let items = document.querySelectorAll(".item")
-let id = null
 
-// Arrastrar Elemento del Panel
-items.forEach(item => { item.addEventListener("dragstart", () => { id = item.getAttribute("id") }) }) // Obtener ID
 
-function comportamiento_drag_drop()
+
+
+
+
+
+
+
+
+
+/* === Drag and Drop: Reordenamiento Tarjetas === */
+function reordenamiento_tarjetas(container, y)
 {
-    // Detectar Cuando esta ENCIMA de la Tarjeta Activa
-    tarjeta_activa.addEventListener("dragover", e =>
+    const draggableElements = [...container.querySelectorAll(".bloque:not(.tarjeta_dragging)")]
+    return draggableElements.reduce((closest, child) =>
     {
-        e.preventDefault();
-        const bloque_activo = document.querySelector(".block_dragging");
-        if (!bloque_activo) return;
-    
-        const posicion_nueva = calcular_reordenamiento(tarjeta_activa, e.clientY);
-        if (posicion_nueva == null) tarjeta_activa.appendChild(bloque_activo)
-        else tarjeta_activa.insertBefore(bloque_activo, posicion_nueva);
-    });
-    
-    // Soltar Elemento en Tarjeta Activa
-    tarjeta_activa.addEventListener("drop",() =>
-    {
-        // e.preventDefault()
-        if (!id) return
-    
-        switch(id) // Crear Blouque de HTML
-        {
-            case "imagen_tarjeta":
-            {
-                const contenedor_imagen = document.createElement("div")
-                contenedor_imagen.classList.add("tarjeta__imagenes", "bloque")
-    
-                const imagen = document.createElement("img")
-                imagen.alt = "Imagen"
-    
-                let url = ""
-                do
-                {
-                    url = prompt("Ingresa la URL de la Imagen")
-                    if (url == null) return
-                }
-                while(url.trim() == "")
-    
-                imagen.src = url
-                contenedor_imagen.appendChild(imagen)
-    
-                // Etiqueta (Opcional)
-                let texto_etiqueta = prompt("Ingrese una Etiqueta, Vacio para Omitir")
-                if (texto_etiqueta.trim() != "")
-                {
-                    const contenedor_etiqueta = document.createElement("div")
-                    contenedor_etiqueta.classList.add("etiqueta")
-    
-                    const etiqueta = document.createElement("p")
-                    etiqueta.classList.add("etiqueta__titulo")
-                    etiqueta.textContent = texto_etiqueta
-    
-                    contenedor_etiqueta.appendChild(etiqueta)
-                    contenedor_imagen.appendChild(contenedor_etiqueta)
-                }
-    
-                tarjeta_activa.appendChild(contenedor_imagen)
-                break
-            }
-    
-            case "titulo_tarjeta":
-            {
-                const contenedor_titulo = document.createElement("div");
-                contenedor_titulo.classList.add("bloque");
-    
-                const titulo = document.createElement("p");
-                titulo.textContent = prompt("Ingresa el Título") || "";
-    
-                contenedor_titulo.appendChild(titulo);
-                tarjeta_activa.appendChild(contenedor_titulo);
-                break;
-            }
-    
-            default:return
-        }
-    
-        id = null // Resetear ID
-
-        // Eliminar Placeholder Tarjeta
-        const placeholder_tarjeta = tarjeta_activa.querySelector(".placeholder_tarjeta")
-        if (placeholder_tarjeta) placeholder_tarjeta.remove()
-        
-        // Reordenar Bloques
-        let bloques = document.querySelectorAll(".bloque")
-        bloques.forEach(bloque =>
-        {
-            bloque.setAttribute("draggable", "true") // Hacer Arrastrables los Bloques
-            bloque.addEventListener("dragstart", () => { bloque.classList.add("block_dragging") }) // Agregar Clase
-            bloque.addEventListener("dragend", () => { bloque.classList.remove("block_dragging") }) // Eliminar Clase
-        })
-    })
-}
-
-// Calcular Posición Para Reordenar Bloque Mientras Arrastras
-function calcular_reordenamiento(container, y)
-{
-    // Obtenemos todos los elementos hijos del contenedor que tienen la clase "bloque" 
-    // y que NO están siendo arrastrados actualmente (no tienen la clase "block_dragging").
-    const draggableElements = [...container.querySelectorAll(".bloque:not(.block_dragging)")]
-
-    // Usamos reduce para encontrar el elemento más cercano a la posición 'y' del mouse,
-    // pero sólo entre los elementos que están *antes* de la posición 'y' (offset < 0).
-    // Para cada elemento, calculamos el 'offset', que es la distancia vertical entre
-    // el centro del elemento y la posición 'y' (positivo debajo, negativo arriba).
-    // Guardamos el mayor valor de offset negativo (el más cercano por arriba a 'y').
-    return draggableElements.reduce((closest, child) => {
         const box = child.getBoundingClientRect()
         const offset = y - box.top - box.height / 2
-        // Si el offset es negativo (el mouse está por encima del centro del elemento)
-        // y es el que más se acerca a 0, actualizamos el "closest".
-        if (offset < 0 && offset > closest.offset) 
-            return { offset: offset, element: child }
-        else 
-            return closest
+        if (offset < 0 && offset > closest.offset) return { offset: offset, element: child }
+        else return closest
     }, { offset: Number.NEGATIVE_INFINITY }).element
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const items = document.querySelectorAll(".item");
+// const canvas = document.getElementById("canvas");
+
+// let draggingType = null;
+
+// // === Arrastrar desde el panel ===
+// items.forEach(item => {
+//   item.addEventListener("dragstart", e => {
+//     draggingType = item.dataset.type;
+//     e.dataTransfer.effectAllowed = "copy";
+//   });
+// });
+
+// // === Soltar en el canvas ===
+// canvas.addEventListener("dragover", e => {
+//   e.preventDefault();
+// });
+
+// canvas.addEventListener("drop", e => {
+//   e.preventDefault();
+//   if (!draggingType) return;
+
+//   // Crear un bloque desde la plantilla
+//   const templateHTML = templates[draggingType];
+//   const wrapper = document.createElement("div");
+//   wrapper.classList.add("bloque-wrapper");
+//   wrapper.setAttribute("draggable", "true");
+//   wrapper.innerHTML = templateHTML;
+
+//   // Quitar texto inicial si es el primer drop
+//   const placeholder = canvas.querySelector(".placeholder");
+//   if (placeholder) placeholder.remove();
+
+//   canvas.appendChild(wrapper);
+
+//   draggingType = null;
+//   activarReordenamiento();
+// });
+
+// // === Función para permitir reordenar los bloques dentro del canvas ===
+// function activarReordenamiento() {
+//   const bloques = canvas.querySelectorAll(".bloque-wrapper");
+
+//   bloques.forEach(bloque => {
+//     bloque.addEventListener("dragstart", e => {
+//       e.dataTransfer.setData("text/plain", "");
+//       bloque.classList.add("dragging");
+//     });
+
+//     bloque.addEventListener("dragend", e => {
+//       bloque.classList.remove("dragging");
+//     });
+//   });
+
+//   canvas.addEventListener("dragover", e => {
+//     e.preventDefault();
+//     const dragging = document.querySelector(".dragging");
+//     const afterElement = getDragAfterElement(canvas, e.clientY);
+//     if (afterElement == null) {
+//       canvas.appendChild(dragging);
+//     } else {
+//       canvas.insertBefore(dragging, afterElement);
+//     }
+//   });
+// }
+
+// // === Calcular posición para insertar bloque mientras arrastras ===
+// function getDragAfterElement(container, y) {
+//   const draggableElements = [...container.querySelectorAll(".bloque-wrapper:not(.dragging)")];
+
+//   return draggableElements.reduce((closest, child) => {
+//     const box = child.getBoundingClientRect();
+//     const offset = y - box.top - box.height / 2;
+//     if (offset < 0 && offset > closest.offset) {
+//       return { offset: offset, element: child };
+//     } else {
+//       return closest;
+//     }
+//   }, { offset: Number.NEGATIVE_INFINITY }).element;
+// }
