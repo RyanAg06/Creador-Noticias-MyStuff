@@ -101,7 +101,49 @@ btn_crear_tarjeta.addEventListener("click", e =>
             {
                 case "imagen":
                 {
-                    console.log("Imagen agregado")
+                    // Crear Contenedor Imagenes
+                    let contenedor_imagen = document.createElement("div")
+                    contenedor_imagen.classList.add("bloque", "tarjeta__imagenes")
+
+                    // Pedir Ruta Imagen
+                    const ruta = prompt("Ingresa la Ruta de la Imagen")
+                    if (ruta == null || ruta == "") return
+
+                    // Crear Imagen
+                    let imagen = document.createElement("img")
+                    imagen.classList.add("tarjeta__imagen")
+                    imagen.src = ruta
+                    contenedor_imagen.appendChild(imagen)
+
+                    // Crear Imagen Fondo
+                    let imagen_fondo = document.createElement("img")
+                    imagen_fondo.classList.add("tarjeta__imagen-fondo")
+                    imagen_fondo.src = ruta
+                    contenedor_imagen.appendChild(imagen_fondo)
+
+                    // Pedir Etiqueta
+                    const texto_etiqueta = prompt("Ingresa Texto de Etiqueta (Vacio para Omitir)")
+
+                    // Agregar Etiqeuta si NO esta Vacia
+                    if (!(texto_etiqueta == null || texto_etiqueta == ""))
+                    {
+                        // Crear Contenedor Etiqueta
+                        let contenedor_etiqueta = document.createElement("div")
+                        contenedor_etiqueta.classList.add("etiqueta")
+
+                        // Crear Etiqueta
+                        let etiqueta = document.createElement("p")
+                        etiqueta.classList.add("etiqueta__titulo")
+                        etiqueta.textContent = texto_etiqueta
+
+                        // Agregar a Contenedores
+                        contenedor_etiqueta.appendChild(etiqueta)
+                        contenedor_imagen.appendChild(contenedor_etiqueta)
+                    }
+
+                    // Agregar Contenedor Imagenes y Eliminar Placeholder
+                    tarjeta_nueva.appendChild(contenedor_imagen)
+                    if (placeholder_tarjeta) placeholder_tarjeta.remove()
                     break
                 }
                 case "titulo":
@@ -198,6 +240,7 @@ elementos.forEach(item =>
         tipo_elemento = null
     })
 })
+function eliminar_bloque() {}
 
 
 

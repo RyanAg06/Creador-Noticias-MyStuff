@@ -311,11 +311,9 @@
     border-radius: 4px;
     transition: all 0.2s ease;
 }
-
 #canva .tarjeta.activa .bloque {
     cursor: move;
 }
-
 #canva .tarjeta.activa .bloque:hover {
     background-color: #e94560;
     color: #fff;
