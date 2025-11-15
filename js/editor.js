@@ -38,7 +38,7 @@ boton_reordenar_tarjetas.addEventListener("click", e =>
             tarjeta_activa.setAttribute("draggable", "true")
         }
 
-        boton_reordenar_tarjetas.textContent = "🚫Detener Deordenamiento"
+        boton_reordenar_tarjetas.textContent = "🚫Detener Reordenamiento"
     }
     else
     {
@@ -332,6 +332,7 @@ function agregar_elementos ()
             titulo.classList.add("tarjeta__titulo", "bloque")
             titulo.textContent = texto_titulo
             contenedor_informacion.appendChild(titulo)
+            titulo.setAttribute("draggable", "true")
 
             // Agregar a Tarjeta
             tarjeta_activa.appendChild(contenedor_informacion)
@@ -354,6 +355,7 @@ function agregar_elementos ()
             // Crear Miniitulo
             const minititulo = document.createElement("p")
             minititulo.classList.add("tarjeta__fecha", "bloque")
+            minititulo.setAttribute("draggable", "true")
             minititulo.textContent = texto_minititulo
             contenedor_informacion.appendChild(minititulo)
 
@@ -378,6 +380,7 @@ function agregar_elementos ()
             // Crear Subtitulo
             const subtitulo = document.createElement("p")
             subtitulo.classList.add("tarjeta__subtitulo", "bloque")
+            subtitulo.setAttribute("draggable", "true")
             subtitulo.textContent = texto_subtitulo
             contenedor_informacion.appendChild(subtitulo)
 
@@ -402,6 +405,7 @@ function agregar_elementos ()
             // Crear Parrafo
             const parrafo = document.createElement("p")
             parrafo.classList.add("tarjeta__descripcion", "bloque")
+            parrafo.setAttribute("draggable", "true")
             parrafo.textContent = texto_parrafo
             contenedor_informacion.appendChild(parrafo)
 
@@ -436,6 +440,7 @@ function agregar_elementos ()
             // Crear Contenedor Boton
             const contenedor_boton = document.createElement("div")
             contenedor_boton.classList.add("div__boton", "bloque")
+            contenedor_boton.setAttribute("draggable", "true")
 
             // Crear Boton
             const boton = document.createElement("a")
@@ -475,12 +480,13 @@ function agregar_elementos ()
             if (url_descarga == null || url_descarga == "") return
 
             // Pedir Texto del Boton
-            let texto_boton = prompt("🔗Ingresa el Texto del Boton")
+            let texto_boton = prompt("📄Ingresa el Texto del Boton")
             if (texto_boton == null || texto_boton == "") texto_boton = "Descargar"
 
             // Crear Contenedor Boton
             const contenedor_boton = document.createElement("div")
             contenedor_boton.classList.add("div__boton", "bloque")
+            contenedor_boton.setAttribute("draggable", "true")
 
             // Crear Boton
             const boton = document.createElement("a")
