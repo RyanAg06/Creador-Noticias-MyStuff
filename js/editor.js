@@ -93,7 +93,7 @@ canva.addEventListener("dragover", e =>
     // Reordenar Tarjetas
     if (reordenamiento_tarjetas)
     {
-        const tarjeta_anterior = obtener_tarjeta_anterior(canva, e.clientY)
+        const tarjeta_anterior = obtener_anterior(canva, e.clientY, ".tarjeta:not(.tarjeta_dragging)")
         const tarjeta_arrastrada = document.querySelector(".tarjeta_dragging")
 
         // Verificar que Exista
@@ -118,6 +118,7 @@ canva.addEventListener("drop", e =>
 
 // Crear Tarjeta Con Boton
 const btn_crear_tarjeta = document.querySelector("#crear_tarjeta")
+let reordenamiento_bloques = false
 btn_crear_tarjeta.addEventListener("click", e =>
 {
     e.stopPropagation()
@@ -178,7 +179,25 @@ function crear_tarjeta ()
     {
         e.stopPropagation()
         e.preventDefault()
-        if (tarjeta_nueva.classList.contains("activa") && tipo_elemento && !reordenamiento_tarjetas) tarjeta_nueva.classList.add("tarjeta_hover")
+
+        // Reordenar Bloques dentro de la tarjeta
+        if (reordenamiento_bloques && tarjeta_nueva.classList.contains("activa"))
+        {
+            const contenedor_informacion = tarjeta_nueva.querySelector(".tarjeta__informacion")
+            if (contenedor_informacion)
+            {
+                const bloque_anterior = obtener_anterior(contenedor_informacion, e.clientY, ".bloque:not(.block_dragging)")
+                const bloque_arrastrado = tarjeta_nueva.querySelector(".block_dragging")
+                
+                if (bloque_arrastrado)
+                {
+                    if (bloque_anterior == null) contenedor_informacion.appendChild(bloque_arrastrado)
+                    else contenedor_informacion.insertBefore(bloque_arrastrado, bloque_anterior)
+                }
+            }
+        }
+        // Agregar elementos nuevos
+        else if (tarjeta_nueva.classList.contains("activa") && tipo_elemento && !reordenamiento_tarjetas) tarjeta_nueva.classList.add("tarjeta_hover")
     })
     tarjeta_nueva.addEventListener("drop", e =>
     {
@@ -512,9 +531,36 @@ function agregar_elementos ()
         }
     }
 
+    // Agregar listeners a TODOS los bloques de la tarjeta activa
+    const bloques = tarjeta_activa.querySelectorAll(".bloque")
+    bloques.forEach(bloque =>
+    {
+        // Remover listeners anteriores si existen (evitar duplicados)
+        bloque.removeEventListener("dragstart", dragstart_block)
+        bloque.removeEventListener("dragend", dragend_block)
+        
+        // Agregar nuevos listeners
+        bloque.addEventListener("dragstart", dragstart_block)
+        bloque.addEventListener("dragend", dragend_block)
+    })
+
     // Eliminar Placeholder
     const placeholder_tarjeta = tarjeta_activa.querySelector(".placeholder_tarjeta")
     if (placeholder_tarjeta) placeholder_tarjeta.remove()
+}
+// Funciones Para los Bloques
+function dragstart_block(e)
+{
+    e.stopPropagation()
+    this.classList.add("block_dragging")
+    reordenamiento_bloques = true
+}
+
+function dragend_block(e)
+{
+    e.stopPropagation()
+    this.classList.remove("block_dragging")
+    reordenamiento_bloques = false
 }
 
 
@@ -528,10 +574,10 @@ function agregar_elementos ()
 
 
 
-/* === Drag and Drop: Reordenamiento Tarjetas === */
-function obtener_tarjeta_anterior(container, y)
+/* === Drag and Drop: Reordenamiento === */
+function obtener_anterior(container, y, clase)
 {
-    const tarjetas = [...container.querySelectorAll(".tarjeta:not(.tarjeta_dragging)")]
+    const tarjetas = [...container.querySelectorAll(clase)]
     return tarjetas.reduce((closest, child) =>
     {
         const box = child.getBoundingClientRect()
