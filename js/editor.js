@@ -15,6 +15,50 @@ btn_previsualizar_html.addEventListener("click", () =>
 
 
 
+
+/* Boton Reordenamiento Tarjetas */
+const boton_reordenar_tarjetas = document.querySelector("#reordenar_tarjetas")
+let reordenamiento_tarjetas = false
+boton_reordenar_tarjetas.addEventListener("click", e =>
+{
+    e.stopPropagation()
+
+    // Si no Hay Ninguna Tarjeta Omitir
+    if (document.querySelector(".placeholder_canva")) return
+
+    boton_reordenar_tarjetas.classList.toggle("activo")
+    reordenamiento_tarjetas = !reordenamiento_tarjetas
+
+
+    if (boton_reordenar_tarjetas.classList.contains("activo"))
+    {
+        if (tarjeta_activa)
+        {
+            tarjeta_activa.classList.add("reordenando")
+            tarjeta_activa.setAttribute("draggable", "true")
+        }
+
+        boton_reordenar_tarjetas.textContent = "🚫Detener Deordenamiento"
+    }
+    else
+    {
+        if (tarjeta_activa)
+        {
+            tarjeta_activa.classList.remove("reordenando")
+            tarjeta_activa.setAttribute("draggable", "false")
+        }
+
+        boton_reordenar_tarjetas.textContent = "↕️Reordenar Tarjetas"
+    }
+})
+
+
+
+
+
+
+
+
 /* === Botones Zona Edicion === */
 const btn_centrar_titulos = document.querySelector("#centrar_titulos")
 btn_centrar_titulos.addEventListener("click", () =>
@@ -45,6 +89,20 @@ canva.addEventListener("dragover", e =>
 {
     e.stopPropagation()
     e.preventDefault()
+
+    // Reordenar Tarjetas
+    if (reordenamiento_tarjetas)
+    {
+        const tarjeta_anterior = obtener_tarjeta_anterior(canva, e.clientY)
+        const tarjeta_arrastrada = document.querySelector(".tarjeta_dragging")
+
+        // Verificar que Exista
+        if (tarjeta_arrastrada)
+        {
+            if (tarjeta_anterior == null) canva.appendChild(tarjeta_arrastrada)
+            else canva.insertBefore(tarjeta_arrastrada, tarjeta_anterior)
+        }
+    }
 })
 canva.addEventListener("drop", e =>
 {
@@ -104,23 +162,23 @@ function crear_tarjeta ()
     tarjeta_nueva.addEventListener("dragstart", e =>
     {
         e.stopPropagation()
-        tarjeta_nueva.classList.add(".tarjeta_dragging")
+        tarjeta_nueva.classList.add("tarjeta_dragging")
+    })
+    tarjeta_nueva.addEventListener("dragend", e =>
+    {
+        e.stopPropagation()
+        tarjeta_nueva.classList.remove("tarjeta_dragging")
     })
     tarjeta_nueva.addEventListener("dragleave", e =>
     {
         e.stopPropagation()
         tarjeta_nueva.classList.remove("tarjeta_hover")
     })
-    tarjeta_nueva.addEventListener("dragend", e =>
-    {
-        e.stopPropagation()
-        tarjeta_nueva.classList.remove(".tarjeta_dragging")
-    })
     tarjeta_nueva.addEventListener("dragover", e =>
     {
         e.stopPropagation()
         e.preventDefault()
-        if (tarjeta_nueva.classList.contains("activa") && tipo_elemento) tarjeta_nueva.classList.add("tarjeta_hover")
+        if (tarjeta_nueva.classList.contains("activa") && tipo_elemento && !reordenamiento_tarjetas) tarjeta_nueva.classList.add("tarjeta_hover")
     })
     tarjeta_nueva.addEventListener("drop", e =>
     {
@@ -130,10 +188,7 @@ function crear_tarjeta ()
         tarjeta_nueva.classList.remove("tarjeta_hover")
 
         // Solo Permitir Agregar Elementos si Esta Activa Y Es un Elemento
-        if (tarjeta_nueva.classList.contains("activa") && tipo_elemento)
-        {
-            agregar_elementos()
-        }
+        if (tarjeta_nueva.classList.contains("activa") && tipo_elemento) agregar_elementos()
     })
     
     // Agregar Dentro de Canva
@@ -144,16 +199,27 @@ function desactivar_tarjetas_anteriores ()
     canva.querySelectorAll(".tarjeta").forEach(tarjeta =>
     {
         tarjeta.classList.remove("activa")
-        if (tarjeta.querySelector(".placeholder_tarjeta")) tarjeta.querySelector(".placeholder_tarjeta").textContent = "🔒Tarjeta Inactiva"
         tarjeta.setAttribute("draggable", "false")
+        if (tarjeta.classList.contains("reordenando"))
+        {
+            tarjeta_activa.setAttribute("draggable", "false")
+            tarjeta.classList.remove("reordenando")
+        }
+        const placeholder_tarjeta = tarjeta.querySelector(".placeholder_tarjeta")
+        if (placeholder_tarjeta) placeholder_tarjeta.textContent = "🔒Tarjeta Inactiva"
     })
 }
 function activar_tarjeta (tarjeta)
 {
     tarjeta_activa = tarjeta
     tarjeta_activa.classList.add("activa")
-    tarjeta_activa.setAttribute("draggable", "true")
-    if (tarjeta_activa.querySelector(".placeholder_tarjeta")) tarjeta_activa.querySelector(".placeholder_tarjeta").textContent = "✅Tarjeta Activa"
+    if (reordenamiento_tarjetas)
+    {
+        tarjeta_activa.setAttribute("draggable", "true")
+        tarjeta_activa.classList.add("reordenando")
+    }
+    const placeholder_tarjeta = tarjeta.querySelector(".placeholder_tarjeta")
+    if (placeholder_tarjeta) placeholder_tarjeta.textContent = "✅Tarjeta Activa"
 }
 
 
@@ -185,6 +251,8 @@ elementos.forEach(item =>
 })
 function agregar_elementos ()
 {
+    if (tarjeta_activa.classList.contains("reordenando")) return
+
     // Agregar Elemento
     switch (tipo_elemento)
     {
@@ -455,10 +523,10 @@ function agregar_elementos ()
 
 
 /* === Drag and Drop: Reordenamiento Tarjetas === */
-function reordenamiento_tarjetas(container, y)
+function obtener_tarjeta_anterior(container, y)
 {
-    const draggableElements = [...container.querySelectorAll(".bloque:not(.tarjeta_dragging)")]
-    return draggableElements.reduce((closest, child) =>
+    const tarjetas = [...container.querySelectorAll(".tarjeta:not(.tarjeta_dragging)")]
+    return tarjetas.reduce((closest, child) =>
     {
         const box = child.getBoundingClientRect()
         const offset = y - box.top - box.height / 2
@@ -466,100 +534,3 @@ function reordenamiento_tarjetas(container, y)
         else return closest
     }, { offset: Number.NEGATIVE_INFINITY }).element
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const items = document.querySelectorAll(".item")
-// const canvas = document.getElementById("canvas")
-
-// let draggingType = null
-
-// // === Arrastrar desde el panel ===
-// items.forEach(item => {
-//   item.addEventListener("dragstart", e => {
-//     draggingType = item.dataset.type
-//     e.dataTransfer.effectAllowed = "copy"
-//   })
-// })
-
-// // === Soltar en el canvas ===
-// canvas.addEventListener("dragover", e => {
-//   e.preventDefault()
-// })
-
-// canvas.addEventListener("drop", e => {
-//   e.preventDefault()
-//   if (!draggingType) return
-
-//   // Crear un bloque desde la plantilla
-//   const templateHTML = templates[draggingType]
-//   const wrapper = document.createElement("div")
-//   wrapper.classList.add("bloque-wrapper")
-//   wrapper.setAttribute("draggable", "true")
-//   wrapper.innerHTML = templateHTML
-
-//   // Quitar texto inicial si es el primer drop
-//   const placeholder = canvas.querySelector(".placeholder")
-//   if (placeholder) placeholder.remove()
-
-//   canvas.appendChild(wrapper)
-
-//   draggingType = null
-//   activarReordenamiento()
-// })
-
-// // === Función para permitir reordenar los bloques dentro del canvas ===
-// function activarReordenamiento() {
-//   const bloques = canvas.querySelectorAll(".bloque-wrapper")
-
-//   bloques.forEach(bloque => {
-//     bloque.addEventListener("dragstart", e => {
-//       e.dataTransfer.setData("text/plain", "")
-//       bloque.classList.add("dragging")
-//     })
-
-//     bloque.addEventListener("dragend", e => {
-//       bloque.classList.remove("dragging")
-//     })
-//   })
-
-//   canvas.addEventListener("dragover", e => {
-//     e.preventDefault()
-//     const dragging = document.querySelector(".dragging")
-//     const afterElement = getDragAfterElement(canvas, e.clientY)
-//     if (afterElement == null) {
-//       canvas.appendChild(dragging)
-//     } else {
-//       canvas.insertBefore(dragging, afterElement)
-//     }
-//   })
-// }
-
-// // === Calcular posición para insertar bloque mientras arrastras ===
-// function getDragAfterElement(container, y) {
-//   const draggableElements = [...container.querySelectorAll(".bloque-wrapper:not(.dragging)")]
-
-//   return draggableElements.reduce((closest, child) => {
-//     const box = child.getBoundingClientRect()
-//     const offset = y - box.top - box.height / 2
-//     if (offset < 0 && offset > closest.offset) {
-//       return { offset: offset, element: child }
-//     } else {
-//       return closest
-//     }
-//   }, { offset: Number.NEGATIVE_INFINITY }).element
-// }

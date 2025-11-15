@@ -294,7 +294,12 @@ body {
     border: 2px solid rgba(233, 69, 96, 0.2);
     transition: all 0.3s ease;
 }
-
+#canva .tarjeta.reordenando {
+    cursor: move;
+}
+#canva .tarjeta.reordenando:hover {
+    transform: scale(1.01);
+}
 #canva .tarjeta.activa {
     border: 2px dashed #e94560;
     box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
@@ -352,7 +357,7 @@ body {
 #canva .tarjeta.activa .bloque {
     cursor: move;
 }
-#canva .tarjeta.activa .bloque:hover {
+#canva .tarjeta.activa:not(.reordenando) .bloque:hover {
     background-color: #e94560;
     color: #fff;
 }
