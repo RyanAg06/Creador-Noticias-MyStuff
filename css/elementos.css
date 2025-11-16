@@ -329,7 +329,7 @@ body {
     user-select: none;
 }
 
-/* Boton Eliminar */
+/* Boton Eliminar Tarjeta */
 .tarjeta:not(.activa) .btn_eliminar_tarjeta {
     display: none;
 }
@@ -401,6 +401,43 @@ body {
     background-color: #e94560;
     color: #fff;
     cursor: move;
+}
+
+/* Boton Eliminar Bloque */
+#canva .bloque .btn_eliminar_bloque {
+    position: absolute;
+    top: 0rem;
+    right: 3rem;
+    background: rgba(220, 38, 38, 0.9);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#canva .bloque {
+    position: relative; /* Necesario para el position absolute del botón */
+}
+#canva .tarjeta.activa .bloque:hover .btn_eliminar_bloque {
+    opacity: 1;
+}
+#canva .bloque .btn_eliminar_bloque:hover {
+    background: rgba(185, 28, 28, 1);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+#canva .bloque .btn_eliminar_bloque:active {
+    transform: scale(0.95);
 }
 
 /* Panel Derecho */

@@ -589,7 +589,8 @@ function agregar_elementos ()
         }
         default:
         {
-            console.log("❓Elemento Desconocido")
+            alert("❓Elemento Desconocido")
+            return
         }
     }
 
@@ -604,6 +605,30 @@ function agregar_elementos ()
         // Agregar nuevos listeners
         bloque.addEventListener("dragstart", dragstart_block)
         bloque.addEventListener("dragend", dragend_block)
+
+        // Solo agregar botón si NO tiene uno ya
+        if (!bloque.querySelector(".btn_eliminar_bloque"))
+        {
+            let btn_eliminar_bloque = document.createElement("button")
+            btn_eliminar_bloque.classList.add("btn_eliminar_bloque")
+            btn_eliminar_bloque.addEventListener("click", e =>
+            {
+                e.stopPropagation()
+                bloque.remove()
+                
+                // Si No Quedan Bloques, Crear Placeholder
+                const bloques_restantes = tarjeta_activa.querySelectorAll(".bloque")
+                if (bloques_restantes.length === 0 && !tarjeta_activa.querySelector(".placeholder_tarjeta"))
+                {
+                    const placeholder = document.createElement("p")
+                    placeholder.classList.add("placeholder_tarjeta")
+                    placeholder.textContent = "✅Tarjeta Activa"
+                    tarjeta_activa.appendChild(placeholder)
+                }
+            })
+            btn_eliminar_bloque.textContent = "🗑️"
+            bloque.appendChild(btn_eliminar_bloque)
+        }
     })
 
     // Eliminar Placeholder
@@ -617,7 +642,6 @@ function dragstart_block(e)
     this.classList.add("block_dragging")
     reordenamiento_bloques = true
 }
-
 function dragend_block(e)
 {
     e.stopPropagation()
