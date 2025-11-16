@@ -16,6 +16,7 @@ btn_previsualizar_html.addEventListener("click", () =>
 
 
 
+
 /* Boton Reordenamiento Tarjetas */
 const boton_reordenar_tarjetas = document.querySelector("#reordenar_tarjetas")
 let reordenamiento_tarjetas = false
@@ -29,15 +30,17 @@ boton_reordenar_tarjetas.addEventListener("click", e =>
     boton_reordenar_tarjetas.classList.toggle("activo")
     reordenamiento_tarjetas = !reordenamiento_tarjetas
 
-
     if (boton_reordenar_tarjetas.classList.contains("activo"))
     {
         if (tarjeta_activa)
         {
             tarjeta_activa.classList.add("reordenando")
             tarjeta_activa.setAttribute("draggable", "true")
-        }
 
+            // Activar Bloques
+            const bloques = tarjeta_activa.querySelectorAll(".bloque")
+            bloques.forEach(bloque => bloque.setAttribute("draggable", "false"))
+        }
         boton_reordenar_tarjetas.textContent = "🚫Detener Reordenamiento"
     }
     else
@@ -46,8 +49,11 @@ boton_reordenar_tarjetas.addEventListener("click", e =>
         {
             tarjeta_activa.classList.remove("reordenando")
             tarjeta_activa.setAttribute("draggable", "false")
-        }
 
+            // Desactivar Bloques
+            const bloques = tarjeta_activa.querySelectorAll(".bloque")
+            bloques.forEach(bloque => bloque.setAttribute("draggable", "true"))
+        }
         boton_reordenar_tarjetas.textContent = "↕️Reordenar Tarjetas"
     }
 })
@@ -81,10 +87,10 @@ btn_modo_vertical.addEventListener("click", () =>
 
 
 /* === Crear Tarjeta === */
+const canva = document.querySelector("#canva")
 let tarjeta_activa = null
 
 // Crear Tarjeta Arrastrando un Elemento al Canva
-const canva = document.querySelector("#canva")
 canva.addEventListener("dragover", e =>
 {
     e.stopPropagation()
@@ -136,6 +142,45 @@ function crear_tarjeta ()
     // Crear Tarjeta
     const tarjeta_nueva = document.createElement("section")
     tarjeta_nueva.classList.add("tarjeta")
+
+    // Boton Eliminar
+    const boton_eliminar_tarjeta = document.createElement("button")
+    boton_eliminar_tarjeta.textContent = "🗑️"
+    boton_eliminar_tarjeta.classList.add("btn_eliminar_tarjeta")
+    boton_eliminar_tarjeta.addEventListener("click", e =>
+    {
+        e.stopPropagation()
+        tarjeta_nueva.remove()
+
+        const numero_tarjetas = canva.querySelectorAll(".tarjeta")
+
+        // Crear un placeholder solo si NO hay uno ya agregado
+        if (numero_tarjetas.length == 0)
+        {
+            const placeholder = document.createElement("p");
+            placeholder.className = "placeholder_canva";
+            placeholder.textContent = "Crea una Tarjeta o Arrastra un Elemento";
+            canva.appendChild(placeholder);
+
+            // Verificar si Esta En Modo Reordenamiento, Cancelar
+            if (reordenamiento_tarjetas)
+            {
+                if (tarjeta_activa)
+                {
+                    tarjeta_activa.classList.remove("reordenando")
+                    tarjeta_activa.setAttribute("draggable", "false")
+        
+                    // Desactivar Bloques
+                    const bloques = tarjeta_activa.querySelectorAll(".bloque")
+                    bloques.forEach(bloque => bloque.setAttribute("draggable", "true"))
+                }
+                reordenamiento_tarjetas = false
+                boton_reordenar_tarjetas.classList.remove("activo")
+                boton_reordenar_tarjetas.textContent = "↕️Reordenar Tarjetas"
+            }
+        }
+    })
+    tarjeta_nueva.appendChild(boton_eliminar_tarjeta)
 
     // Agregar Placeholder a Tarjeta Nueva y Activarla
     const placeholder_tarjeta = document.createElement("p")
@@ -219,26 +264,43 @@ function desactivar_tarjetas_anteriores ()
     {
         tarjeta.classList.remove("activa")
         tarjeta.setAttribute("draggable", "false")
+
+        // Editar Placeholder
+        const placeholder_tarjeta = tarjeta.querySelector(".placeholder_tarjeta")
+        if (placeholder_tarjeta) placeholder_tarjeta.textContent = "🔒Tarjeta Inactiva"
+
+        // Desactivar Reordenamineto de Tarjetas
         if (tarjeta.classList.contains("reordenando"))
         {
             tarjeta_activa.setAttribute("draggable", "false")
             tarjeta.classList.remove("reordenando")
         }
-        const placeholder_tarjeta = tarjeta.querySelector(".placeholder_tarjeta")
-        if (placeholder_tarjeta) placeholder_tarjeta.textContent = "🔒Tarjeta Inactiva"
+
+        // Desactivar Bloques
+        let bloques = tarjeta.querySelectorAll(".bloque")
+        bloques.forEach(bloque => bloque.setAttribute("draggable", "false"))
     })
 }
 function activar_tarjeta (tarjeta)
 {
     tarjeta_activa = tarjeta
     tarjeta_activa.classList.add("activa")
+
+    // Editar Placeholder
+    const placeholder_tarjeta = tarjeta.querySelector(".placeholder_tarjeta")
+    if (placeholder_tarjeta) placeholder_tarjeta.textContent = "✅Tarjeta Activa"
+
+    // Activar Reordenamineto de Tarjetas
     if (reordenamiento_tarjetas)
     {
         tarjeta_activa.setAttribute("draggable", "true")
         tarjeta_activa.classList.add("reordenando")
+        return
     }
-    const placeholder_tarjeta = tarjeta.querySelector(".placeholder_tarjeta")
-    if (placeholder_tarjeta) placeholder_tarjeta.textContent = "✅Tarjeta Activa"
+
+    // Activar Bloques
+    const bloques = tarjeta_activa.querySelectorAll(".bloque")
+    bloques.forEach(bloque => bloque.setAttribute("draggable", "true"))
 }
 
 
