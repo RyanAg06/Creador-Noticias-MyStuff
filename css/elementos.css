@@ -48,6 +48,7 @@ body {
     background-color: #16213e;
 }
 
+/* Titulos */
 .titulo {
     color: #e94560;
     font-size: 0.95rem;
@@ -60,7 +61,6 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
 }
-
 .titulo::after {
     content: '';
     position: absolute;
@@ -71,16 +71,15 @@ body {
     background-color: #00d9ff;
     transition: width 0.3s ease;
 }
-
 .titulo:hover {
     color: #00d9ff;
     letter-spacing: 1.5px;
 }
-
 .titulo:hover::after {
     width: 100%;
 }
 
+/* Botones de Centrado */
 .configuracion_tarjetas {
     display: flex;
     justify-content: space-between;
@@ -90,12 +89,10 @@ body {
     border-radius: 6px;
     margin-bottom: 1rem;
 }
-
 .botones-config {
     display: flex;
     gap: 0.5rem;
 }
-
 #centrar_titulos,
 #modo_vertical {
     padding: 0.5rem 1rem;
@@ -107,14 +104,12 @@ body {
     font-size: 0.85rem;
     transition: all 0.3s ease;
 }
-
 #centrar_titulos:hover,
 #modo_vertical:hover {
     background-color: #e94560;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
 }
-
 #centrar_titulos:active,
 #modo_vertical:active {
     transform: translateY(0);
@@ -127,7 +122,6 @@ body {
     padding: 1.5rem;
     border-right: 2px solid #1a1a2e;
 }
-
 #panel_elementos {
     background-color: #0f3460;
     min-width: 20rem;
@@ -137,16 +131,6 @@ body {
     top: 0;
     height: 100vh;
     overflow-y: auto;
-}
-
-.lista_elementos .item {
-    cursor: grab;
-    padding: 0.7rem;
-    margin: 0.5rem;
-    background-color: #1a1a2e;
-    color: #eee;
-    border-radius: 6px;
-    transition: all 0.3s ease;
 }
 
 /* Label Elementos */
@@ -184,16 +168,26 @@ body {
 }
 
 /* Elementos Disponibles */
+.lista_elementos .item {
+    cursor: grab;
+    padding: 0.7rem;
+    margin: 0.5rem;
+    background-color: #1a1a2e;
+    color: #eee;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
 .lista_elementos .item:hover {
     background-color: #e94560;
     cursor: grab;
-    padding: 0.7rem;
-    transform: translateX(5px);
+    transform: translateX(0.6rem);
 }
 .lista_elementos .item.dragging {
     background-color: #e94560;
     opacity: 0.7;
 }
+
+/* Botones Inferiores Izquierdos */
 .botones_extras {
     display: flex;
     flex-direction: column;
@@ -201,7 +195,7 @@ body {
 }
 .botones_extras button {
     display: block;
-    margin: 0.1em;
+    margin: 0.1rem;
     padding: 0.5rem;
     background-color: #1a1a2e;
     color: #eee;
@@ -222,8 +216,7 @@ body {
     padding: 1rem;
 }
 
-
-/* Titulos Superiores */
+/* Titulos Superiores de Tarjeta */
 .titulos_superiores {
     display: flex;
     flex-direction: column;
@@ -268,6 +261,8 @@ body {
     height: fit-content;
     border-radius: 8px;
 }
+
+/* Placeholder Canva */
 .placeholder_canva {
     color: #6b7280;
     font-size: 1.2rem;
@@ -299,34 +294,24 @@ body {
     cursor: move;
 }
 #canva .tarjeta.reordenando:hover {
-    transform: scale(1.01);
+    transform: scale(1.02);
+}
+#canva .tarjeta.reordenando:active {
+    transform: scale(0.97);;
+}
+#canva .tarjeta.tarjeta_dragging {
+    transform: scale(0.97);
 }
 #canva .tarjeta.activa {
     border: 2px dashed #e94560;
     box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
     background-color: rgba(233, 69, 96, 0.05);
 }
-
 #canva .tarjeta.tarjeta_hover {
     background-color: rgba(0, 217, 255, 0.08);
     border: 2px solid #00d9ff;
     box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
     transform: scale(1.01);
-}
-
-/* Plcaeholder Tarjeta */
-.placeholder_tarjeta {
-    color: #9ca3af;
-    font-size: 0.95rem;
-    text-align: center;
-    padding: 3rem ;
-    margin: 1.1rem;
-    border-radius: 6px;
-    background-color: rgba(15, 52, 96, 0.25);
-    opacity: 0.7;
-    transition: all 0.3s ease;
-    font-style: italic;
-    user-select: none;
 }
 
 /* Boton Eliminar Tarjeta */
@@ -349,13 +334,11 @@ body {
     transition: all 0.3s ease;
     z-index: 10;
 }
-
 .tarjeta:hover .btn_eliminar_tarjeta,
 .tarjeta.activa .btn_eliminar_tarjeta {
     opacity: 1;
     transform: translateY(0);
 }
-
 .btn_eliminar_tarjeta:hover {
     background-color: #e94560;
     color: #fff;
@@ -364,33 +347,47 @@ body {
     box-shadow: 0 2px 8px rgba(233, 69, 96, 0.4);
 }
 
-/* Placeholder */
-.tarjeta.activa:not(.reordenando) .placeholder_tarjeta::before {
+/* Placeholder Tarjeta */
+.placeholder_tarjeta {
+    color: #9ca3af;
+    font-size: 0.95rem;
+    text-align: center;
+    padding: 3rem;
+    margin: 1.1rem;
+    border-radius: 6px;
+    background-color: rgba(15, 52, 96, 0.25);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    font-style: italic;
+}
+.tarjeta.activa .placeholder_tarjeta::before {
     content: '⏬ Suelta Elementos Aquí ⏬';
     display: block;
     font-size: 0.9rem;
     color: #6b7280;
 }
-.tarjeta.activa .placeholder_tarjeta::before {
+.tarjeta.activa.reordenando .placeholder_tarjeta::before {
     content: '↕️ Sube o Baja Para Reordenar ↕️';
     display: block;
-    font-size: 0.9rem;
     color: #6b7280;
 }
-
 .tarjeta.activa .placeholder_tarjeta {
     opacity: 0.9;
     border-color: rgba(233, 69, 96, 0.5);
     background-color: rgba(15, 52, 96, 0.35);
 }
-
 .tarjeta.tarjeta_hover .placeholder_tarjeta {
     opacity: 1;
     background-color: rgba(0, 217, 255, 0.1);
 }
 
+.tarjeta__descripcion {
+    text-wrap: auto;
+}
+
 /* Bloques Dentro del Canva */
 #canva .bloque {
+    position: relative;
     display: block;
     padding: 0.5rem;
     color: #eee;
@@ -403,42 +400,161 @@ body {
     cursor: move;
 }
 
-/* Boton Eliminar Bloque */
-#canva .bloque .btn_eliminar_bloque {
+/* === Botones Edicion de Contenedor Imagenes === */
+#canva .btn_editar_imagen {
     position: absolute;
-    top: 0rem;
-    right: 3rem;
-    background: rgba(220, 38, 38, 0.9);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: all 0.2s ease;
-    z-index: 10;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    top: 0;
+    left: 0;
+    margin: 1rem;
+    z-index: 1;
+}
+#canva .btn_eliminar_imagen {
+    position: absolute;
+    top: 0;
+    left: 2.5rem;
+    margin: 1rem;
+    z-index: 1;
 }
 
-#canva .bloque {
-    position: relative; /* Necesario para el position absolute del botón */
+/* === Botones Edicion === */
+.tarjeta .btn_editar_bloque,
+.tarjeta .btn_eliminar_bloque,
+.tarjeta .btn_editar_imagen,
+.tarjeta .btn_eliminar_imagen {
+    position: absolute;
+    margin-left: 0.5rem;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    color: white;
 }
-#canva .tarjeta.activa .bloque:hover .btn_eliminar_bloque {
+
+.tarjeta .btn_editar_bloque {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%) translateX(-100%);
+}
+.tarjeta .btn_eliminar_bloque {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%) translateX(-230%);
+}
+
+/* Boton Editar */
+.tarjeta .btn_editar_imagen,
+.tarjeta .btn_editar_bloque {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+.tarjeta .btn_editar_bloque:hover,
+.tarjeta .btn_editar_imagen:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+/* Boton Eliminar */
+.tarjeta .btn_eliminar_bloque,
+.tarjeta .btn_eliminar_imagen {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+.tarjeta .btn_eliminar_bloque:hover,
+.tarjeta .btn_eliminar_imagen:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+}
+
+/* Mostrar Botones al Hacer Hover */
+.tarjeta.activa .btn_editar_imagen,
+.tarjeta.activa .btn_eliminar_imagen,
+.tarjeta.activa .bloque:hover .btn_editar_bloque,
+.tarjeta.activa .bloque:hover .btn_eliminar_bloque {
     opacity: 1;
+    pointer-events: all;
 }
-#canva .bloque .btn_eliminar_bloque:hover {
-    background: rgba(185, 28, 28, 1);
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+
+/* Elementos Tarjeta */
+
+/* Tarjeta Imagenes */
+#canva .tarjeta__imagenes {
+    position: relative;
+    min-height: 5em;
+    max-height: 15rem;
+    overflow: hidden;
 }
-#canva .bloque .btn_eliminar_bloque:active {
-    transform: scale(0.95);
+#canva .tarjeta__imagen {
+    z-index: 1;
+    object-fit: contain;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
 }
+#canva .tarjeta__imagen-fondo {
+    aspect-ratio: 16/9;
+    filter: blur(1rem);
+    width: 100%;
+    height: 100%;
+}
+#canva .tarjeta__informacion {
+    padding: 0.6rem;
+}
+#canva .tarjeta.activa .tarjeta__titulo {
+    font-size: 2.2rem;
+    font-weight: bold;
+    border-bottom: #e94560 0.2rem solid;
+}
+#canva .tarjeta.activa .tarjeta__subtitulo {
+    font-size: 1.3rem;
+    display: block;
+    text-decoration: underline;
+    text-decoration-color: #e94560;
+    text-underline-offset: 0.2em;
+}
+#canva .tarjeta.activa .tarjeta__fecha {
+    color: #e94560;
+}
+#canva .tarjeta.activa .tarjeta__descripcion {
+    min-height: 3rem;
+}
+
+/* Botones */
+.boton {
+    box-shadow: 2px 2px 10px #000;
+    border-top-left-radius: 2em;
+    border-bottom-right-radius: 2em;
+    color: white;
+    text-align: center;
+    display: inline-block;
+    min-width: 10em;
+    padding: 0.5em;
+    margin: 0.7em auto;
+    transition: 0.3s;
+}
+.tarjeta.activa .boton:hover {
+    box-shadow: 2vh 1vh 1.5vh rgba(0, 0, 0, 0.5);
+    color: var(--rosa);
+}
+.tarjeta.activa .descargar {
+    background-color: #008849;
+    border-radius: 0.4em;
+    padding: 0.8em;
+    cursor: pointer;
+}
+.tarjeta.activa .descargar:hover {
+    background-color: #008849;
+    border: none;
+    color: white;
+    transform: scale(1.01);
+}
+
+
 
 /* Panel Derecho */
 #panel_html_generado {
