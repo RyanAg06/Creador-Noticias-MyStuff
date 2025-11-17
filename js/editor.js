@@ -1,5 +1,5 @@
 
-/* === Mostrar/Ocultar HTML Generado (Falta Generar HTML 📌) === */
+/* === Mostrar/Ocultar HTML Generado (Falta Mostrar HTML 📌) === */
 const btn_previsualizar_html = document.querySelector("#previsualizar_html")
 const panel_html_generado = document.querySelector("#panel_html_generado")
 btn_previsualizar_html.addEventListener("click", () =>
@@ -332,7 +332,8 @@ function activar_tarjeta (tarjeta)
 /* === Agregar Elementos Dentro de Tarjetas === */
 const elementos = document.querySelectorAll(".item")
 let tipo_elemento = null
-const ruta_imagen_defecto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2FJ1AZfBlBiwkOXNmppL%2Fgiphy.gif&f=1&nofb=1&ipt=e6c115469ab4f837275db3739ce4506f09359d573151dffb15b89421aaeb355a"
+const ruta_imagen_fondo_defecto = ''
+const ruta_imagen_delantera_defecto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2FJ1AZfBlBiwkOXNmppL%2Fgiphy.gif&f=1&nofb=1&ipt=e6c115469ab4f837275db3739ce4506f09359d573151dffb15b89421aaeb355a"
 elementos.forEach(item =>
 {
     // Obtener "data_type" del Elemento Tomado
@@ -374,21 +375,21 @@ function agregar_elementos ()
             const ruta = prompt("🔗Ingresa la Ruta de la Imagen")
             if (ruta == null || ruta == "") return
 
-            // Crear Imagen
-            const imagen = document.createElement("img")
-            imagen.classList.add("tarjeta__imagen")
-            imagen.alt = "Imagen"
-            imagen.src = ruta
-            imagen.onerror = () => imagen.src = ruta_imagen_defecto
-            contenedor_imagen.appendChild(imagen)
-
             // Crear Imagen Fondo
             const imagen_fondo = document.createElement("img")
             imagen_fondo.classList.add("tarjeta__imagen-fondo")
             imagen_fondo.alt = "Imagen Fondo"
             imagen_fondo.src = ruta
-            imagen_fondo.onerror = () => imagen_fondo.src = ruta_imagen_defecto
+            imagen_fondo.onerror = () => imagen_fondo.src = ruta_imagen_fondo_defecto
             contenedor_imagen.appendChild(imagen_fondo)
+
+            // Crear Imagen
+            const imagen = document.createElement("img")
+            imagen.classList.add("tarjeta__imagen")
+            imagen.alt = "Imagen"
+            imagen.src = ruta
+            imagen.onerror = () => imagen.src = ruta_imagen_delantera_defecto
+            contenedor_imagen.appendChild(imagen)
 
             // Pedir Texto Etiqueta
             const texto_etiqueta = prompt("📄Ingresa Texto de Etiqueta (Vacio para Omitir)")
@@ -672,7 +673,7 @@ function agregar_elementos ()
         }
     })
 
-    // Agregar Botones de Edicion a la Imagen si Existe
+    /* === Agregar Botones de Edicion a la Imagen si Existe ✅ === */
     const contenedor_imagen = tarjeta_activa.querySelector(".tarjeta__imagenes")
     if (contenedor_imagen)
     {
@@ -694,6 +695,11 @@ function agregar_elementos ()
                 {
                     imagen.src = nueva_ruta
                     imagen_fondo.src = nueva_ruta
+                }
+
+                imagen.onerror = function() {
+                    imagen_fondo.src = ruta_imagen_fondo_defecto
+                    imagen.src = ruta_imagen_delantera_defecto
                 }
                 
                 // Editar Etiqueta si Existe
@@ -773,10 +779,7 @@ function crear_placeholder_tarjeta ()
     }
 
     // Si No Quedan mas Bloques, Eliminar Contenedor Informacion
-    if (bloques_restantes == 0 && tarjeta_activa.querySelector(".tarjeta__informacion"))
-    {
-        tarjeta_activa.querySelector(".tarjeta__informacion").remove()
-    }
+    if (bloques_restantes == 0 && tarjeta_activa.querySelector(".tarjeta__informacion")) tarjeta_activa.querySelector(".tarjeta__informacion").remove()
 }
 function dragstart_block(e)
 {

@@ -484,12 +484,11 @@ body {
 /* Tarjeta Imagenes */
 #canva .tarjeta__imagenes {
     position: relative;
-    min-height: 5em;
-    max-height: 15rem;
+    min-height: 10em;
+    max-height: 10rem;
     overflow: hidden;
 }
 #canva .tarjeta__imagen {
-    z-index: 1;
     object-fit: contain;
     position: absolute;
     inset: 0;
@@ -497,10 +496,31 @@ body {
     height: 100%;
 }
 #canva .tarjeta__imagen-fondo {
+    z-index: -1;
     aspect-ratio: 16/9;
+    object-fit: fill;
     filter: blur(1rem);
     width: 100%;
     height: 100%;
+}
+#canva .etiqueta {
+    border-top-right-radius: 0.7rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    position: absolute;
+    bottom: 0;
+    right: 50%;
+    transform: translateX(-80%);
+    padding: 0.5rem;
+    width: 5rem;
+    opacity: 0.6;
+}
+#canva .tarjeta.activa .etiqueta {
+    background-color: #e94560;
+}
+#canva .tarjeta.activa .etiqueta p {
+    text-align: center;
 }
 #canva .tarjeta__informacion {
     padding: 0.6rem;
