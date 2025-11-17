@@ -128,6 +128,8 @@ btn_editar_titulo_pagina.addEventListener("click", e =>
 // Editar Subtitulo Pagina
 const subtitulo_pagina = document.querySelector(".subtitulo_pagina")
 const btn_editar_subtitulo_pagina = document.querySelector(".editar_subtitulo")
+const btn_cambiar_modo = document.querySelector("#cambiar_modo")
+
 btn_editar_subtitulo_pagina.addEventListener("click", e =>
 {
     e.stopPropagation()
@@ -142,19 +144,22 @@ btn_editar_subtitulo_pagina.addEventListener("click", e =>
     subtitulo_pagina.textContent = texto_subtitulo
 })
 
+// Verificar Estado Botones
+if (!contenedor_titulos.classList.contains("centrados")) btn_centrar_titulos.textContent = "⬅️Lado Izquierdo"
+if (!canva.classList.contains("vertical")) btn_cambiar_modo.textContent = "#️⃣Modo Cuadricula"
+
 // Boton Centrar Titulos
 btn_centrar_titulos.addEventListener("click", () =>
 {
     contenedor_titulos.classList.toggle("centrados")
-    btn_centrar_titulos.textContent = (contenedor_titulos.classList.contains("centrados") ? "⬅️Lado Izquierdo" : "↔️Centrar Titulos")
+    btn_centrar_titulos.textContent = (contenedor_titulos.classList.contains("centrados") ? "↔️Titulos Centrados" : "⬅️Lado Izquierdo")
 })
 
 // Boton Cambiar Modo de Vista
-const btn_modo_vertical = document.querySelector("#modo_vertical")
-btn_modo_vertical.addEventListener("click", () =>
+btn_cambiar_modo.addEventListener("click", () =>
 {
-    btn_modo_vertical.classList.toggle("vertical")
-    btn_modo_vertical.textContent = (btn_modo_vertical.classList.contains("vertical") ? "📔Modo Cuadricula" : "↕️Modo Vertical")
+    canva.classList.toggle("vertical")
+    btn_cambiar_modo.textContent = (canva.classList.contains("vertical") ? "↕️Modo Vertical" : "#️⃣Modo Cuadricula")
 })
 
 

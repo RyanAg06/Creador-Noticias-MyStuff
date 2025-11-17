@@ -95,7 +95,7 @@ body {
     gap: 0.5rem;
 }
 #centrar_titulos,
-#modo_vertical {
+#cambiar_modo {
     padding: 0.5rem 1rem;
     background-color: #1a1a2e;
     color: #eee;
@@ -106,13 +106,13 @@ body {
     transition: all 0.3s ease;
 }
 #centrar_titulos:hover,
-#modo_vertical:hover {
+#cambiar_modo:hover {
     background-color: #e94560;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
 }
 #centrar_titulos:active,
-#modo_vertical:active {
+#cambiar_modo:active {
     transform: translateY(0);
 }
 

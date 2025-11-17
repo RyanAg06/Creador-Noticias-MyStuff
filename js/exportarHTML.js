@@ -41,7 +41,9 @@ function exportar_HTML()
                     <p class="titulos__titulo">${texto_titulo_pagina}</p>
                     <p class="titulos__subtitulo">${texto_subtitulo_pagina}</p>
                 </div>
-                <article class="tarjetas">${cleanHTML}</article>
+                <article class="tarjetas ${(canva.classList.contains("vertical") ? "vertical" : "")}">
+                    ${cleanHTML}
+                </article>
                 <a href="#" class="boton-subir"><ion-icon name="arrow-up-outline"></ion-icon></a>
             </main>
             <script src="./js/footer.js"></script>
