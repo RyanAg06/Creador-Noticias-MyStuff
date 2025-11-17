@@ -2,9 +2,11 @@
 /* === Mostrar/Ocultar HTML Generado (Falta Mostrar HTML 📌) === */
 const btn_previsualizar_html = document.querySelector("#previsualizar_html")
 const panel_html_generado = document.querySelector("#panel_html_generado")
+const panel_editor = document.querySelector("#panel_editor")
 btn_previsualizar_html.addEventListener("click", () =>
 {
     panel_html_generado.classList.toggle("show")
+    panel_editor.classList.toggle("compacto")
     btn_previsualizar_html.textContent = (panel_html_generado.getAttribute("class") == "show") ? "🚫Ocultar HTML" : "👁️Previsualizar HTML"
 })
 
