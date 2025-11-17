@@ -222,6 +222,8 @@ body {
     flex-direction: column;
     gap: 0.8rem;
 }
+
+/* Titulos Pagina */
 .titulo-container {
     display: flex;
     justify-content: space-between;
@@ -230,8 +232,13 @@ body {
     background-color: rgba(15, 52, 96, 0.3);
     border-radius: 6px;
 }
-.titulo_tarjeta,
-.subtitulo_tarjeta {
+.titulos_superiores.centrados .titulo_pagina,
+.titulos_superiores.centrados .subtitulo_pagina {
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+.titulo_pagina,
+.subtitulo_pagina {
     margin: 0;
     color: #eee;
     font-weight: 600;
@@ -379,10 +386,6 @@ body {
 .tarjeta.tarjeta_hover .placeholder_tarjeta {
     opacity: 1;
     background-color: rgba(0, 217, 255, 0.1);
-}
-
-.tarjeta__descripcion {
-    text-wrap: auto;
 }
 
 /* Bloques Dentro del Canva */

@@ -102,13 +102,52 @@ function activar_reordenamiento ()
 
 
 
-/* === Botones Zona Edicion (Falta Centrar y Editar Ambos Titulos 📌) === */
+/* === Botones Zona Edicion (Falta Centrar y Editar Ambos Titulos ✅) === */
 const btn_centrar_titulos = document.querySelector("#centrar_titulos")
+const contenedor_titulos = document.querySelector(".titulos_superiores")
+
+// Editar Titulo
+const titulo_pagina = document.querySelector(".titulo_pagina")
+const btn_editar_titulo_pagina = document.querySelector(".editar_titulo")
+btn_editar_titulo_pagina.addEventListener("click", e =>
+{
+    e.stopPropagation()
+
+    // Pedir texto Titulo
+    const texto_titulo = prompt("Ingresa el Titulo Principal", titulo_pagina.textContent)
+
+    // Cancelar si Esta Vacio
+    if (texto_titulo == null || texto_titulo == "") return
+
+    // Cambiar Texto
+    titulo_pagina.textContent = texto_titulo
+})
+
+// Editar Subtitulo Pagina
+const subtitulo_pagina = document.querySelector(".subtitulo_pagina")
+const btn_editar_subtitulo_pagina = document.querySelector(".editar_subtitulo")
+btn_editar_subtitulo_pagina.addEventListener("click", e =>
+{
+    e.stopPropagation()
+
+    // Pedir texto Titulo
+    const texto_subtitulo = prompt("Ingresa el Titulo Principal", subtitulo_pagina.textContent)
+
+    // Cancelar si Esta Vacio
+    if (texto_subtitulo == null || texto_subtitulo == "") return
+
+    // Cambiar Texto
+    subtitulo_pagina.textContent = texto_subtitulo
+})
+
+// Boton Centrar Titulos
 btn_centrar_titulos.addEventListener("click", () =>
 {
-    btn_centrar_titulos.classList.toggle("centrados")
-    btn_centrar_titulos.textContent = (btn_centrar_titulos.classList.contains("centrados") ? "⬅️Lado Izquierdo" : "↔️Centrar Titulos")
+    contenedor_titulos.classList.toggle("centrados")
+    btn_centrar_titulos.textContent = (contenedor_titulos.classList.contains("centrados") ? "⬅️Lado Izquierdo" : "↔️Centrar Titulos")
 })
+
+// Boton Cambiar Modo de Vista
 const btn_modo_vertical = document.querySelector("#modo_vertical")
 btn_modo_vertical.addEventListener("click", () =>
 {
@@ -333,7 +372,7 @@ function activar_tarjeta (tarjeta)
 const elementos = document.querySelectorAll(".item")
 let tipo_elemento = null
 const ruta_imagen_fondo_defecto = ''
-const ruta_imagen_delantera_defecto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2FJ1AZfBlBiwkOXNmppL%2Fgiphy.gif&f=1&nofb=1&ipt=e6c115469ab4f837275db3739ce4506f09359d573151dffb15b89421aaeb355a"
+const ruta_imagen_defecto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2FJ1AZfBlBiwkOXNmppL%2Fgiphy.gif&f=1&nofb=1&ipt=e6c115469ab4f837275db3739ce4506f09359d573151dffb15b89421aaeb355a"
 elementos.forEach(item =>
 {
     // Obtener "data_type" del Elemento Tomado
@@ -380,7 +419,6 @@ function agregar_elementos ()
             imagen_fondo.classList.add("tarjeta__imagen-fondo")
             imagen_fondo.alt = "Imagen Fondo"
             imagen_fondo.src = ruta
-            imagen_fondo.onerror = () => imagen_fondo.src = ruta_imagen_fondo_defecto
             contenedor_imagen.appendChild(imagen_fondo)
 
             // Crear Imagen
@@ -388,8 +426,13 @@ function agregar_elementos ()
             imagen.classList.add("tarjeta__imagen")
             imagen.alt = "Imagen"
             imagen.src = ruta
-            imagen.onerror = () => imagen.src = ruta_imagen_delantera_defecto
             contenedor_imagen.appendChild(imagen)
+
+            // Cargar Ruta por Defecto si hay Error
+            imagen.onerror = function() {
+                imagen_fondo.src = ruta_imagen_defecto
+                imagen.src = ruta_imagen_defecto
+            }
 
             // Pedir Texto Etiqueta
             const texto_etiqueta = prompt("📄Ingresa Texto de Etiqueta (Vacio para Omitir)")
@@ -697,9 +740,10 @@ function agregar_elementos ()
                     imagen_fondo.src = nueva_ruta
                 }
 
+                // Cargar Ruta por Defecto si hay Error
                 imagen.onerror = function() {
-                    imagen_fondo.src = ruta_imagen_fondo_defecto
-                    imagen.src = ruta_imagen_delantera_defecto
+                    imagen_fondo.src = ruta_imagen_defecto
+                    imagen.src = ruta_imagen_defecto
                 }
                 
                 // Editar Etiqueta si Existe

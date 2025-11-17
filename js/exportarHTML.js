@@ -11,6 +11,10 @@ function exportar_HTML()
     const canva = document.querySelector("#canva")
     let copia_canva = canva.cloneNode(true)
 
+    const contenedor_titulos = document.querySelector(".titulos_superiores")
+    const texto_titulo_pagina = document.querySelector(".titulo_pagina").textContent
+    const texto_subtitulo_pagina = document.querySelector(".subtitulo_pagina").textContent
+
     // Limpiar Elementos no Deseados
     limpiar_elementos(copia_canva)
     
@@ -33,9 +37,9 @@ function exportar_HTML()
             <div class="scroll-h"></div>
             <script src="./js/header.js"></script>
             <main>
-                <div class="titulos">
-                    <p class="titulos__titulo"></p>
-                    <p class="titulos__subtitulo"></p>
+                <div class="titulos ${(contenedor_titulos.classList.contains("centrados")) ? "centro" : ""}">
+                    <p class="titulos__titulo">${texto_titulo_pagina}</p>
+                    <p class="titulos__subtitulo">${texto_subtitulo_pagina}</p>
                 </div>
                 <article class="tarjetas">${cleanHTML}</article>
                 <a href="#" class="boton-subir"><ion-icon name="arrow-up-outline"></ion-icon></a>
