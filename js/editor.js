@@ -1,14 +1,44 @@
 
 /* === Mostrar/Ocultar HTML Generado (Falta Mostrar HTML 📌) === */
+const canva = document.querySelector("#canva")
 const btn_previsualizar_html = document.querySelector("#previsualizar_html")
 const panel_html_generado = document.querySelector("#panel_html_generado")
-const panel_editor = document.querySelector("#panel_editor")
+recargar_html()
+
+// Verificar Estado Boton Previsualizar
+if (panel_html_generado.classList.contains("show")) btn_previsualizar_html.textContent = "🚫Ocultar Previsualizacion"
+
+// Boton Previsualizar HTML
 btn_previsualizar_html.addEventListener("click", () =>
 {
     panel_html_generado.classList.toggle("show")
-    panel_editor.classList.toggle("compacto")
-    btn_previsualizar_html.textContent = (panel_html_generado.getAttribute("class") == "show") ? "🚫Ocultar HTML" : "👁️Previsualizar HTML"
+    btn_previsualizar_html.textContent = (panel_html_generado.getAttribute("class") == "show") ? "🚫Ocultar Previsualizacion" : "👁️Ver Previsualizacion"
+    recargar_html()
 })
+function recargar_html ()
+{
+    const copia_canva = canva.cloneNode(true) // Clonar Canva
+    const contenedor_titulos = document.querySelector(".titulos_superiores") // Contenedor Titulos 
+    const texto_titulo_pagina = contenedor_titulos.querySelector(".titulo_pagina").textContent // Obtener Titulo
+    const texto_subtitulo_pagina = contenedor_titulos.querySelector(".subtitulo_pagina").textContent // Obtener Subtitulo
+    const preview_tarjetas = document.querySelector(".tarjetas") // Contenedor tarjetas Preview
+
+    // Centrar Titulos
+    if (contenedor_titulos.classList.contains("centrados")) panel_html_generado.querySelector(".titulos").classList.add("centro")
+    else panel_html_generado.querySelector(".titulos").classList.remove("centro")
+
+    // Cargar Titulos
+    panel_html_generado.querySelector(".titulos__titulo").textContent = texto_titulo_pagina
+    panel_html_generado.querySelector(".titulos__subtitulo").textContent = texto_subtitulo_pagina
+
+    // Cambiar Modo Tarjetas
+    if (canva.classList.contains("vertical")) preview_tarjetas.classList.add("vertical")
+    else preview_tarjetas.classList.remove("vertical")
+
+    // Cargar Tarjetas
+    limpiar_elementos(copia_canva)
+    preview_tarjetas.innerHTML = copia_canva.innerHTML
+}
 
 
 
@@ -20,8 +50,8 @@ btn_previsualizar_html.addEventListener("click", () =>
 
 
 /* === Reordenamiento de Tarjetas ✅ === */
-const canva = document.querySelector("#canva")
 const boton_reordenar_tarjetas = document.querySelector("#reordenar_tarjetas")
+const listas_elementos = document.querySelectorAll(".lista_elementos")
 let numero_tarjetas = 0
 let reordenamiento_tarjetas = false
 
@@ -37,32 +67,16 @@ boton_reordenar_tarjetas.addEventListener("click", e =>
     if (boton_reordenar_tarjetas.classList.contains("activo")) desactivar_reordenamiento()
     else activar_reordenamiento()
 })
-
-// Arrastrar Tarjeta Arriba del Canva
-canva.addEventListener("dragover", e =>
-{
-    e.stopPropagation()
-    e.preventDefault()
-
-    // Verificar si se Puede Reordenar Tarjetas
-    if (reordenamiento_tarjetas)
-    {
-        const tarjeta_anterior = obtener_anterior(canva, e.clientY, ".tarjeta:not(.tarjeta_dragging)")
-        const tarjeta_arrastrada = document.querySelector(".tarjeta_dragging")
-
-        // Verificar si Esta Arrastrando una Tarjeta
-        if (tarjeta_arrastrada)
-        {
-            if (tarjeta_anterior == null) canva.appendChild(tarjeta_arrastrada)
-            else canva.insertBefore(tarjeta_arrastrada, tarjeta_anterior)
-        }
-    }
-})
 function desactivar_reordenamiento ()
 {
     // Desactivar Reordenamiento
     reordenamiento_tarjetas = false
     boton_reordenar_tarjetas.classList.remove("activo")
+
+    // Activar Elementos Disponibles
+    listas_elementos.forEach(lista => lista.classList.remove("bloqueado"))
+    const elementos = document.querySelectorAll(".item")
+    elementos.forEach(elemento => elemento.setAttribute("draggable", "true"))
 
     // Verificar si hay Una Tarjeta Activa
     if (tarjeta_activa)
@@ -83,7 +97,12 @@ function activar_reordenamiento ()
     reordenamiento_tarjetas = true
     boton_reordenar_tarjetas.classList.add("activo")
 
-    // Verificar si hay Ununa Tarjeta Activa
+    // Desactivar Elementos Disponibles
+    listas_elementos.forEach(lista => lista.classList.add("bloqueado"))
+    const elementos = document.querySelectorAll(".item")
+    elementos.forEach(elemento => elemento.setAttribute("draggable", "false"))
+
+    // Verificar si hay Una Tarjeta Activa
     if (tarjeta_activa)
     {
         // Eliminar Clase y Draggable
@@ -123,6 +142,7 @@ btn_editar_titulo_pagina.addEventListener("click", e =>
 
     // Cambiar Texto
     titulo_pagina.textContent = texto_titulo
+    recargar_html()
 })
 
 // Editar Subtitulo Pagina
@@ -142,6 +162,7 @@ btn_editar_subtitulo_pagina.addEventListener("click", e =>
 
     // Cambiar Texto
     subtitulo_pagina.textContent = texto_subtitulo
+    recargar_html()
 })
 
 // Verificar Estado Botones
@@ -153,6 +174,7 @@ btn_centrar_titulos.addEventListener("click", () =>
 {
     contenedor_titulos.classList.toggle("centrados")
     btn_centrar_titulos.textContent = (contenedor_titulos.classList.contains("centrados") ? "↔️Titulos Centrados" : "⬅️Lado Izquierdo")
+    recargar_html()
 })
 
 // Boton Cambiar Modo de Vista
@@ -160,6 +182,7 @@ btn_cambiar_modo.addEventListener("click", () =>
 {
     canva.classList.toggle("vertical")
     btn_cambiar_modo.textContent = (canva.classList.contains("vertical") ? "↕️Modo Vertical" : "#️⃣Modo Cuadricula")
+    recargar_html()
 })
 
 
@@ -174,6 +197,11 @@ let tarjeta_activa = null
 let reordenamiento_bloques = false
 
 // Crear Tarjeta Arrastrando un Elemento al Canva
+canva.addEventListener("dragover", e =>
+{
+    e.stopPropagation()
+    e.preventDefault()
+})
 canva.addEventListener("drop", e =>
 {
     e.stopPropagation()
@@ -275,6 +303,21 @@ function crear_tarjeta ()
                     else contenedor_informacion.insertBefore(bloque_arrastrado, bloque_anterior)
                 }
             }
+            recargar_html()
+        }
+
+         // Reordenamiento Tarjetas
+        else if (reordenamiento_tarjetas)
+        {
+            const tarjeta_anterior = obtener_anterior(canva, e.clientY, ".tarjeta:not(.tarjeta_dragging)")
+            const tarjeta_arrastrada = document.querySelector(".tarjeta_dragging")
+    
+            if (tarjeta_arrastrada)
+            {
+                if (tarjeta_anterior == null) canva.appendChild(tarjeta_arrastrada)
+                else canva.insertBefore(tarjeta_arrastrada, tarjeta_anterior)
+            }
+            recargar_html()
         }
 
         // Agregar Clase para que se Haga Azul al Pasar un Elemento Encima de la Tarjeta
@@ -296,6 +339,8 @@ function crear_tarjeta ()
     // Agregar Tarjeta al Canva y Obtener Numero Tarjetas
     canva.appendChild(tarjeta_nueva)
     numero_tarjetas = canva.querySelectorAll(".tarjeta").length
+
+    recargar_html()
 }
 function eliminar_tarjeta (tarjeta)
 {
@@ -310,7 +355,7 @@ function eliminar_tarjeta (tarjeta)
         const placeholder = document.createElement("p");
         placeholder.className = "placeholder_canva";
         placeholder.textContent = "⭐Crea una Tarjeta o Arrastra un Elemento";
-        canva.appendChild(placeholder);
+        canva.appendChild(placeholder)
 
         // Verificar si Esta En Modo Reordenamiento, Cancelar
         if (reordenamiento_tarjetas) desactivar_reordenamiento()
@@ -318,6 +363,8 @@ function eliminar_tarjeta (tarjeta)
 
     // Si esta Reordenando y Solo Queda 1 Tarjeta, Cancelar Reordenamiento
     if (reordenamiento_tarjetas && numero_tarjetas <= 1) desactivar_reordenamiento()
+
+    recargar_html()
 }
 function desactivar_tarjetas_anteriores ()
 {
@@ -379,7 +426,7 @@ function activar_tarjeta (tarjeta)
 const elementos = document.querySelectorAll(".item")
 let tipo_elemento = null
 const ruta_imagen_fondo_defecto = ''
-const ruta_imagen_defecto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2FJ1AZfBlBiwkOXNmppL%2Fgiphy.gif&f=1&nofb=1&ipt=e6c115469ab4f837275db3739ce4506f09359d573151dffb15b89421aaeb355a"
+const ruta_imagen_defecto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia1.tenor.com%2Fm%2FwCrZqAL1cWMAAAAC%2Fspinning-fish.gif&f=1&nofb=1&ipt=435d6d8ca1000bf77f32d403bde4060bcdff4d45f39711291be9406f810f233c"
 elementos.forEach(item =>
 {
     // Obtener "data_type" del Elemento Tomado
@@ -405,7 +452,7 @@ function agregar_elementos ()
         case "imagen":
         {
             // Crear Contenedor Imagenes si no Existe (Solo 1 Por Tarjeta)
-            let contenedor_imagen = document.querySelector(".tarjeta__imagenes")
+            let contenedor_imagen = tarjeta_activa.querySelector(".tarjeta__imagenes")
             if (!contenedor_imagen)
             {
                 contenedor_imagen = document.createElement("div")
@@ -439,6 +486,7 @@ function agregar_elementos ()
             imagen.onerror = function() {
                 imagen_fondo.src = ruta_imagen_defecto
                 imagen.src = ruta_imagen_defecto
+                recargar_html()
             }
 
             // Pedir Texto Etiqueta
@@ -462,7 +510,7 @@ function agregar_elementos ()
             }
 
             // Agregar "Contenedor Imagenes" Antes de "Contenedor Informacion"
-            const contenedor_informacion = document.querySelector(".tarjeta__informacion")
+            const contenedor_informacion = tarjeta_activa.querySelector(".tarjeta__informacion")
             if (!contenedor_informacion) tarjeta_activa.appendChild(contenedor_imagen)
             else tarjeta_activa.insertBefore(contenedor_imagen, contenedor_informacion)
             break
@@ -718,6 +766,7 @@ function agregar_elementos ()
                 e.stopPropagation()
                 bloque.remove()
                 crear_placeholder_tarjeta()
+                recargar_html()
             })
             bloque.appendChild(btn_eliminar_bloque)
         }
@@ -751,6 +800,7 @@ function agregar_elementos ()
                 imagen.onerror = function() {
                     imagen_fondo.src = ruta_imagen_defecto
                     imagen.src = ruta_imagen_defecto
+                    recargar_html()
                 }
                 
                 // Editar Etiqueta si Existe
@@ -788,6 +838,7 @@ function agregar_elementos ()
                         contenedor_imagen.appendChild(contenedor_etiqueta)
                     }
                 }
+                recargar_html()
             })
 
             // Agregar Boton Editar a Contenedor Imagen
@@ -806,6 +857,7 @@ function agregar_elementos ()
                 e.stopPropagation()
                 contenedor_imagen.remove()
                 crear_placeholder_tarjeta()
+                recargar_html()
             })
 
             // Agregar Boton a Contenedor Imagen
@@ -816,6 +868,7 @@ function agregar_elementos ()
     // Eliminar Placeholder
     const placeholder_tarjeta = tarjeta_activa.querySelector(".placeholder_tarjeta")
     if (placeholder_tarjeta) placeholder_tarjeta.remove()
+    recargar_html()
 }
 function crear_placeholder_tarjeta ()
 {
@@ -944,6 +997,7 @@ function editar_bloque(bloque)
             break
         }
     }
+    recargar_html()
 }
 
 

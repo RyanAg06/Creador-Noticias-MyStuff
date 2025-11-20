@@ -1,0 +1,100 @@
+/* ========================== SLIDER ========================= */
+/* MARK: Slider */
+
+/* Slider */
+.slider {
+    margin-top: 1em;
+    position: relative;
+    max-height: 20em;
+}
+
+/* Contenedor Imagenes */
+.slider__imagenes {
+    background: rgba(0, 0, 0, 0.1);
+    display: flex;
+    overflow: hidden;
+    transition: margin-left 0.3s;
+    max-height: 20em;
+}
+
+/* Imagen */
+.slider__imagen {
+    object-fit: contain;
+}
+
+/* Botones */
+.slider-boton {
+    background-color: var(--rosa);
+    border-radius: 1em;
+    position: absolute;
+    top: 50%;
+    width: 2.5em;
+    height: 2.5em;
+    opacity: 0.6;
+    scale: 0.8;
+    transform: translateY(-50%);
+    transition: opacity 0.3s, scale 0.3s;
+}
+.slider-boton:hover {
+    opacity: 1;
+    scale: 1;
+}
+.slider .boton-izquierda {
+    left: 1em;
+}
+.slider .boton-derecha {
+    right: 1em;
+}
+
+/* ========================== SLIDER INFINITO ========================= */
+/* MARK: INFINITO */
+
+/* Slider */
+.slider-infinito {
+    overflow: hidden;
+    display: flex;
+    flex-wrap: nowrap;
+}
+.slider-infinito:hover .slider__imagenes-infinito {
+    animation-play-state: paused;
+}
+
+/* Contenedor Imagenes */
+.slider__imagenes-infinito {
+    display: inline-block;
+    animation: infinito 11s infinite linear;
+}
+
+/* Imagen */
+.slider__imagen-infinito {
+    height: 15em;
+}
+
+/* Animacion */
+@keyframes infinito {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* ========================== Tablet y Celular ========================= */
+/* MARK: Tablet y Celular */
+@media (width < 1081px) {
+    /* Slider */
+    .slider-infinito {
+        overflow-x: scroll;
+        scroll-snap-type: x mandatory;
+    }
+
+    /* Contenedor Imagenes */
+    .slider__imagenes-infinito {
+        animation-play-state: paused;
+    }
+
+    .slider-infinito :nth-child(2) {
+        display: none;
+    }
+}

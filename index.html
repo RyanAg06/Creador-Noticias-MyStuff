@@ -6,13 +6,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="./css/elementos.css">
+        <link rel="stylesheet" href="./css/estilos.css">
     </head>
 
 
     <body>
 
         <!-- Titulo Superior -->
-        <p class="titulo_superior">Editor MyStuff</p>
+        <!-- <p class="titulo_superior">Editor MyStuff</p> -->
 
         <!-- Contenido -->
         <div id="contenido">
@@ -36,7 +37,7 @@
                     <li class="item" data-type="codigo" draggable="false">🚫Codigo</li>
                     <li class="item" data-type="select" draggable="false">🚫Seleccionables</li>
                     <li>
-                        <ul class="lista_elementos lista_botones">
+                        <ul class="lista_elementos">
                             <p class="label_items">Botones</p>
                             <li class="item" data-type="boton_visitar" draggable="true">Boton Visitar</li>
                             <li class="item" data-type="boton_descargar" draggable="true">Boton Descargar</li>
@@ -48,7 +49,7 @@
                 <div class="botones_extras">
                     <button id="crear_tarjeta">➕Crear Tarjeta</button>
                     <button id="reordenar_tarjetas">↕️Reordenar Tarjetas</button>
-                    <button id="previsualizar_html">👁️Previsualizar HTML</button>
+                    <button id="previsualizar_html">👁️Ver Previsualizacion</button>
                     <button id="cargar_html">Cargar HTML</button>
                     <button id="descargar_html">💾Descargar HTML</button>
                 </div>
@@ -86,18 +87,18 @@
 
             <!-- Panel HTML Generado -->
             <div id="panel_html_generado">
-                <p class="titulo">Vista Previa del HTML</p>
-                <div class="html">html</div>
+                <div class="titulos">
+                    <p class="titulos__titulo"></p>
+                    <p class="titulos__subtitulo"></p>
+                </div>
+                <article class="tarjetas"></article>
             </div>
 
         </div>
-
-        <!-- HTML Generado -->
-        <div id="html_generado"></div>
     </body>
 
     <!-- Codigo JS -->
-    <script src="./js/editor.js"></script>
     <script src="./js/exportarHTML.js"></script>
+    <script src="./js/editor.js"></script>
 
 </html>

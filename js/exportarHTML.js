@@ -19,11 +19,10 @@ function exportar_HTML()
     limpiar_elementos(copia_canva)
     
     // Obtener el HTML Nuevo
-    const cleanHTML = copia_canva.innerHTML;
+    const cleanHTML = copia_canva.innerHTML
     
     // Crear HTML Final
-    const htmlContent = `
-    <!DOCTYPE html>
+    const htmlContent = `<!DOCTYPE html>
     <html lang="es">
         <head>
             <title>MyStuff</title>
@@ -48,8 +47,7 @@ function exportar_HTML()
             </main>
             <script src="./js/footer.js"></script>
         </body>
-    </html>
-    `;
+    </html>`;
     
     // Exportar Archivo
     downloadHTMLFile(htmlContent, 'seccion.html');
@@ -70,56 +68,26 @@ function downloadHTMLFile(content, filename)
 function limpiar_elementos(canva)
 {
     // Elementos a Eliminar
-    const elementsToRemove = [
-        'placeholder_canva',
-        'placeholder_tarjeta',
-        'btn_eliminar_bloque',
-        'btn_editar_bloque',
-        'placeholder_tarjeta',
-        'btn_eliminar_tarjeta',
-        'btn_editar_imagen',
-        'btn_eliminar_imagen'
-    ]
-
-    // Atributos a Eliminar
-    const attributesToRemove = [
-        'draggable'
-    ];
+    const elementosEliminar = [
+        '.placeholder_canva',
+        '.placeholder_tarjeta',
+        '.btn_eliminar_bloque',
+        '.btn_editar_bloque',
+        '.placeholder_tarjeta',
+        '.btn_eliminar_tarjeta',
+        '.btn_editar_imagen',
+        '.btn_eliminar_imagen'
+    ].join(', ')
     
     // Clases a Eliminar
-    const classesToRemove = [
-        'activa',
-        'bloque',
-    ];
-    
-    // Recorrer Todos los Hijos y Crear Lista
-    const canvaHTML = canva.getElementsByTagName('*')
-    const lista_elementos = [canva, ...canvaHTML]
-    
-    // Recorrer Lista
-    lista_elementos.forEach(elemento =>
-    {
-        // Eliminar Atributos No Deseados
-        attributesToRemove.forEach(attributeToRemove =>
-        {
-            if (elemento.hasAttribute(attributeToRemove)) elemento.removeAttribute(attributeToRemove)
-        })
+    const clasesEliminar = ['.activa','.bloque']
 
-        // Eliminar Clases y Elementos
-        if (elemento.classList)
-        {
-            // Eliminar Clases
-            classesToRemove.forEach(classToRemove => elemento.classList.remove(classToRemove))
+    // Eliminar Elementos
+    canva.querySelectorAll(elementosEliminar).forEach(elemento => elemento.remove())
 
-            // Eliminar Elemento
-            elementsToRemove.forEach(elementoToRemove =>
-            {
-                if (elemento.classList.contains(elementoToRemove))
-                {
-                    elemento.remove()
-                    return
-                }
-            })
-        }
-    })
+    // Eliminar Atributo Draggable
+    canva.querySelectorAll("[draggable]").forEach(elemento => elemento.removeAttribute("draggable"))
+
+    // Eliminar Clases
+    clasesEliminar.forEach(claseEliminar => canva.querySelectorAll(claseEliminar).forEach(elemento => elemento.classList.remove(claseEliminar)))
 }
