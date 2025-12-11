@@ -1,0 +1,110 @@
+
+let sliderActual = "";                                                              // Reinicio Slider Seleccionado
+let margin = 0;                                                                     // Reinicio Margin
+
+function recargar_sliders ()
+{
+    // Variables
+    let contenedores = document.querySelectorAll(".slider__imagenes");                  // Selecciono Contenedores
+
+    // Redimensiono Slider
+    contenedores.forEach(contenedor =>
+    {
+        let imagenes = contenedor.querySelectorAll(".slider__imagen");                  // Selecciono Cada Imagen del Contenedor
+        cantidad = imagenes.length;                                                     // Obtengo Numero de Imagenes
+        contenedor.style.width = `${100 * cantidad}%`;                                  // Redimensiono Contenedor por Cada Imagen
+        contenedor.style.marginLeft = `0%`;                                             // Voy a la Ultima Imagen
+        
+        // Buscar botones en el contenedor padre .slider, no en .slider__imagenes
+        let contenedor_slider = contenedor.closest(".slider");
+        botones = contenedor_slider ? contenedor_slider.querySelectorAll(`.slider-boton`) : [];  // Selecciono Todos los Botones
+
+        botones.forEach(boton =>
+        {
+            if(cantidad === 1)
+            {
+                boton.style.display = "none";                                           // Si solo hay 1 Imagen Oculto Botones
+            }
+            else
+            {
+                boton.style.display = "";                                              // Si hay mas de 1 Imagen Muestro Botones
+            }
+        })
+
+        imagenes.forEach(imagen =>
+        {
+            imagen.style.width = `${100 / cantidad}%`;                                  // Redimensiono Cada Imagen del Contenedor
+        });
+
+
+    });
+}
+function moverDerecha(tarjeta__slider)
+{
+    // Buscar el slider dentro del panel_html_generado (previsualización)
+    let slider = panel_html_generado.querySelector(`#${tarjeta__slider}`);  // Selecciono El Slider
+    let sliderImagenes = slider.querySelector(".slider__imagenes");        // Selecciono Conenedor de Imagenes
+    let imagenes = slider.querySelectorAll(".slider__imagen");             // Selecciono Todas las Imagenes
+    let cantidad = imagenes.length;                                         // Cuento Nuemro de Imagenes
+
+    if(sliderActual === tarjeta__slider)                                    // Verifico si Selecciono Otro Slider
+    {
+        margin -= 100;                                                      // Muevo a la Derecha
+        if(margin < -((cantidad - 1) * 100))                                // Verifico si Llego al Final
+        {
+            margin = -((cantidad - 1) * 100);                               // Evito que se Pase
+        }
+    }
+    else
+    {
+        sliderActual = tarjeta__slider;                                     // Cambio de Slider
+        if(sliderImagenes.style.marginLeft == "0%")                         // Verifico si Esta en la Primera Posicion
+        {
+            margin = 0;                                                     // Reinicio Margin
+            margin -= 100;                                                  // Muevo a Derecha
+        }
+        else
+        {
+            margin = parseInt(sliderImagenes.style.marginLeft.replace("%",""));     // Obtengo Margin Actual y lo Convierto a Numero
+            margin -= 100;                                                          // Muevo a la Derecha
+            if(margin < -((cantidad - 1) * 100))                                    // Verifico si Llego al Final
+            {
+                margin = -((cantidad - 1) * 100);                                   // Evito que se Pase
+            }
+        }
+    }
+    sliderImagenes.style.marginLeft = `${margin}%`;                                 // Aplico Margin al Contenedor de Imagenes
+}
+function moverIzquierda(tarjeta__slider)
+{
+    // Buscar el slider dentro del panel_html_generado (previsualización)
+    let slider = panel_html_generado.querySelector(`#${tarjeta__slider}`);  // Selecciono El Slider
+    let sliderImagenes = slider.querySelector(".slider__imagenes");        // Selecciono Conenedor de Imagenes
+
+    if(sliderActual === tarjeta__slider)                                    // Verifico si Selecciono Otro Slider
+    {
+        margin += 100;                                                      // Muevo a la Derecha
+        if(margin >= 0)                                                     // Verifico si Llego al Final
+        {
+            margin = 0;                                                     // Evito que se Pase
+        }
+    }
+    else
+    {
+        sliderActual = tarjeta__slider;                                     // Cambio de Slider
+        if(sliderImagenes.style.marginLeft == "0%")                         // Verifico si Esta en la Primera Posicion
+        {
+            margin = 0;                                                     // Reinicio Margin
+        }
+        else
+        {
+            margin = parseInt(sliderImagenes.style.marginLeft.replace("%",""));     // Obtengo Margin Actual y lo Convierto a Numero
+            margin += 100;                                                          // Muevo a la Derecha
+            if(margin >= 0)                                                         // Verifico si Llego al Final
+            {
+                margin = 0;                                                         // Evito que se Pase
+            }
+        }
+    }
+    sliderImagenes.style.marginLeft = `${margin}%`;                                 // Aplico Margin al Contenedor de Imagenes
+}

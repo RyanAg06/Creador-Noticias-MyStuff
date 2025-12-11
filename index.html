@@ -32,9 +32,9 @@
                     <li class="item" data-type="minititulo" draggable="true">Minititulo</li>
                     <li class="item" data-type="subtitulo" draggable="true">Subtitulo</li>
                     <li class="item" data-type="parrafo" draggable="true">Parrafo</li>
-                    <li class="item" data-type="slider" draggable="false">🚫Slider</li>
-                    <li class="item" data-type="lista" draggable="false">🚫Lista</li>
-                    <li class="item" data-type="codigo" draggable="false">🚫Codigo</li>
+                    <li class="item" data-type="slider" draggable="true">Slider</li>
+                    <li class="item" data-type="lista" draggable="true">Lista</li>
+                    <li class="item" data-type="codigo" draggable="true">Codigo</li>
                     <li class="item" data-type="select" draggable="false">🚫Seleccionables</li>
                     <li>
                         <ul class="lista_elementos">
@@ -86,7 +86,7 @@
             </div>
 
             <!-- Panel HTML Generado -->
-            <div id="panel_html_generado">
+            <div id="panel_html_generado" class="show">
                 <div class="titulos">
                     <p class="titulos__titulo"></p>
                     <p class="titulos__subtitulo"></p>
@@ -100,5 +100,10 @@
     <!-- Codigo JS -->
     <script src="./js/exportarHTML.js"></script>
     <script src="./js/editor.js"></script>
+    <script src="./js/slider.js"></script>
+
+    <!-- Iconos -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
 </html>

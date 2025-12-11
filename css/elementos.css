@@ -427,6 +427,7 @@ body {
 
 /* === Botones Edicion === */
 .tarjeta .btn_editar_bloque,
+.tarjeta .btn_agregar_elementos,
 .tarjeta .btn_eliminar_bloque,
 .tarjeta .btn_editar_imagen,
 .tarjeta .btn_eliminar_imagen {
@@ -441,19 +442,35 @@ body {
     font-size: 16px;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
+    z-index: 10;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     color: white;
+}
+.tarjeta .btn_agregar_elementos {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%) translateX(-360%);
 }
 .tarjeta .btn_editar_bloque {
     top: 50%;
     right: 0;
-    transform: translateY(-50%) translateX(-100%);
+    transform: translateY(-50%) translateX(-230%);
 }
 .tarjeta .btn_eliminar_bloque {
     top: 50%;
     right: 0;
-    transform: translateY(-50%) translateX(-230%);
+    transform: translateY(-50%) translateX(-100%);
+}
+
+/* Boton Agregar Elementos */
+.tarjeta .btn_agregar_elementos,
+.tarjeta .btn_agregar_elementos {
+    background: linear-gradient(135deg, #7efd99 0%, #1ee94a 100%);
+}
+.tarjeta .btn_agregar_elementos:hover,
+.tarjeta .btn_agregar_elementos:hover {
+    background: linear-gradient(135deg, #25e94f 0%, #13ee43 100%);
+    box-shadow: 0 4px 16px rgba(81, 255, 153, 0.4);
 }
 
 /* Boton Editar */
@@ -481,8 +498,9 @@ body {
 /* Mostrar Botones al Hacer Hover */
 .tarjeta.activa .btn_editar_imagen,
 .tarjeta.activa .btn_eliminar_imagen,
-.tarjeta.activa .bloque:hover .btn_editar_bloque,
-.tarjeta.activa .bloque:hover .btn_eliminar_bloque {
+.tarjeta.activa:not(.reordenando) .bloque:hover .btn_agregar_elementos,
+.tarjeta.activa:not(.reordenando) .bloque:hover .btn_editar_bloque,
+.tarjeta.activa:not(.reordenando) .bloque:hover .btn_eliminar_bloque {
     opacity: 1;
     pointer-events: all;
 }
@@ -551,9 +569,24 @@ body {
 #canva .tarjeta.activa .tarjeta__descripcion {
     min-height: 3rem;
 }
+#canva .tarjeta.activa .tarjeta__lista {
+    font-size: 1.1em;
+    color: white;
+}
+#canva .tarjeta.activa .tarjeta__lista li {
+    margin-left: 1em;
+    list-style: initial;
+}
+#canva .tarjeta .slider {
+    overflow: hidden;
+}
+#canva .tarjeta .slider .slider-boton {
+    display: none;
+}
 
 /* Botones */
-.tarjeta.activa .boton {
+#canva .tarjeta .boton {
+    pointer-events: none;
     box-shadow: 2px 2px 10px #000;
     border-top-left-radius: 2em;
     border-bottom-right-radius: 2em;
@@ -565,24 +598,27 @@ body {
     margin: 0.7em auto;
     transition: 0.3s;
 }
-.tarjeta.activa .boton:hover {
+#canva .tarjeta.activa .boton:hover {
     box-shadow: 2vh 1vh 1.5vh rgba(0, 0, 0, 0.5);
     color: #fff;
 }
-.tarjeta.activa .descargar {
-    background-color: #008849;
+#canva .tarjeta .descargar {
     border-radius: 0.4em;
     padding: 0.8em;
-    cursor: pointer;
-}
-.tarjeta.activa .descargar:hover {
-    background-color: #008849;
-    border: none;
-    color: white;
-    transform: scale(1.01);
 }
 
-
+/* Codigo */
+#canva .tarjeta .copiar
+{
+    pointer-events: none;
+    display: inline-block;
+    padding: 0.5rem;
+}
+#canva .tarjeta .codigo
+{
+    display: block;
+    padding: 0.5rem;
+}
 
 /* Panel Derecho */
 #panel_html_generado {

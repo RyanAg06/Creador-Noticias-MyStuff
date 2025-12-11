@@ -76,7 +76,8 @@ function limpiar_elementos(canva)
         '.placeholder_tarjeta',
         '.btn_eliminar_tarjeta',
         '.btn_editar_imagen',
-        '.btn_eliminar_imagen'
+        '.btn_eliminar_imagen',
+        '.btn_agregar_elementos'
     ].join(', ')
     
     // Clases a Eliminar

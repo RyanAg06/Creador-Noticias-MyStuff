@@ -425,8 +425,19 @@ function activar_tarjeta (tarjeta)
 /* === Agregar Elementos Dentro de Tarjetas === */
 const elementos = document.querySelectorAll(".item")
 let tipo_elemento = null
-const ruta_imagen_fondo_defecto = ''
-const ruta_imagen_defecto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia1.tenor.com%2Fm%2FwCrZqAL1cWMAAAAC%2Fspinning-fish.gif&f=1&nofb=1&ipt=435d6d8ca1000bf77f32d403bde4060bcdff4d45f39711291be9406f810f233c"
+
+function obtener_ruta_aleatoria()
+{
+    const rutas_imagen_defecto = [
+        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia1.tenor.com%2Fm%2FwCrZqAL1cWMAAAAC%2Fspinning-fish.gif&f=1&nofb=1&ipt=435d6d8ca1000bf77f32d403bde4060bcdff4d45f39711291be9406f810f233c",
+        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia4.giphy.com%2Fmedia%2Fv1.Y2lkPTc5MGI3NjExejYwN3MxYTRjZm5ubHk1c2s0enluODAzMTUyOGZqa2tseHZtOXh0cCZlcD12MV9naWZzX3NlYXJjaCZjdD1n%2FCPlkqEvq8gRDW%2F200.gif&f=1&nofb=1&ipt=a02f287e44c68175a1c190d48ac71d57f87356bfaf93fe3ac7d7ea7fcd9c2c82",
+        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.tenor.com%2Fue7Q8JmP_0MAAAAM%2Foiia-oiiaoiia.gif&f=1&nofb=1&ipt=ced626dca28341f0b94dd1fb4f5bbac234ae22b9641c7f55e3cb037a6a94717c",
+        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.FYRMiETGyJyo7rh68knMHQHaHa%3Fpid%3DApi&f=1&ipt=935961266a57c630253c3dde398f21e1232671985a27a55b0b043f7f01f546d4&ipo=images"
+    ]
+    let id = (Math.floor(Math.random() * (rutas_imagen_defecto.length)))
+    return rutas_imagen_defecto[id]
+}
+
 elementos.forEach(item =>
 {
     // Obtener "data_type" del Elemento Tomado
@@ -465,7 +476,7 @@ function agregar_elementos ()
             }
 
             // Pedir Ruta de Imagen
-            const ruta = prompt("🔗Ingresa la Ruta de la Imagen")
+            const ruta = prompt("🔗Ingresa la Ruta de la Imagen").trim()
             if (ruta == null || ruta == "") return
 
             // Crear Imagen Fondo
@@ -484,16 +495,16 @@ function agregar_elementos ()
 
             // Cargar Ruta por Defecto si hay Error
             imagen.onerror = function() {
-                imagen_fondo.src = ruta_imagen_defecto
-                imagen.src = ruta_imagen_defecto
+                imagen_fondo.src = obtener_ruta_aleatoria()
+                imagen.src = imagen_fondo.src
                 recargar_html()
             }
 
             // Pedir Texto Etiqueta
-            const texto_etiqueta = prompt("📄Ingresa Texto de Etiqueta (Vacio para Omitir)")
+            const texto_etiqueta = prompt("📄Ingresa Texto de Etiqueta (Vacio para Omitir)").trim()
 
             // Agregar Etiqueta si NO esta Vacia
-            if (!texto_etiqueta == null || !texto_etiqueta == "")
+            if (!(texto_etiqueta == null || texto_etiqueta == ""))
             {
                 // Crear Contenedor Etiqueta
                 const contenedor_etiqueta = document.createElement("div")
@@ -615,29 +626,180 @@ function agregar_elementos ()
             tarjeta_activa.appendChild(contenedor_informacion)
             break
         }
-
-        /* (Elementos Faltantes 📌)
         case "slider":
         {
-            console.log("Slider agregado")
+            // Crear Contenedor Informacion si no Existe
+            let contenedor_informacion = tarjeta_activa.querySelector(".tarjeta__informacion")
+            if (!contenedor_informacion)
+            {
+                contenedor_informacion = document.createElement("div")
+                contenedor_informacion.classList.add("tarjeta__informacion")
+            }
+
+            // Calcular ID
+            const id = canva.querySelectorAll(".slider").length
+
+            // Crear Contenedor Slider
+            const contenedor_slider = document.createElement("div")
+            contenedor_slider.classList.add("slider", "bloque")
+            contenedor_slider.id = `slider${id}`
+            
+            // Crear Contenedor Imagenes
+            const contenedor_imagenes = document.createElement("div")
+            contenedor_imagenes.classList.add("slider__imagenes")
+
+            // Pedir Rutas
+            let input = null
+            let rutas = []
+            do
+            {
+                input = prompt("Ingresa la Ruta de la Imagen\n-0 para Salir")
+                if (input == null || input == "0") break
+                if (input.trim() !== "") rutas.push(input)
+            }
+            while(true)
+
+            // Crear Imagenes
+            rutas.forEach(ruta =>
+            {
+                const imagen = document.createElement("img")
+                imagen.classList.add("slider__imagen")
+                imagen.src = ruta
+                imagen.onerror = function() {
+                    imagen.src = obtener_ruta_aleatoria()
+                    recargar_html()
+                }
+                contenedor_imagenes.appendChild(imagen)
+            })
+
+            // Crear Boton Izquierda
+            const btn_izquierda = document.createElement("ion-icon")
+            btn_izquierda.setAttribute("name", "chevron-back-outline")
+            btn_izquierda.classList.add("slider-boton", "boton-izquierda")
+            btn_izquierda.setAttribute("onclick", `moverIzquierda('slider${id}')`)
+
+            // Crear Boton Derecha
+            const btn_derecha = document.createElement("ion-icon")
+            btn_derecha.setAttribute("name", "chevron-forward-outline")
+            btn_derecha.classList.add("slider-boton", "boton-derecha")
+            btn_derecha.setAttribute("onclick", `moverDerecha('slider${id}')`)
+            
+            // Agregar a Tarjetas
+            contenedor_slider.appendChild(contenedor_imagenes)
+            contenedor_slider.appendChild(btn_izquierda)
+            contenedor_slider.appendChild(btn_derecha)
+            contenedor_informacion.appendChild(contenedor_slider)
+            tarjeta_activa.appendChild(contenedor_informacion)
+            recargar_sliders()
             break
         }
         case "lista":
         {
-            console.log("Lista agregado")
+            // Crear Contenedor Informacion si no Existe
+            let contenedor_informacion = tarjeta_activa.querySelector(".tarjeta__informacion")
+            if (!contenedor_informacion)
+            {
+                contenedor_informacion = document.createElement("div")
+                contenedor_informacion.classList.add("tarjeta__informacion")
+            }
+
+            // Crear Lista
+            const lista = document.createElement("ul")
+            lista.classList.add("tarjeta__lista", "bloque")
+
+            // Pedir Titulo
+            const texto_titulo = prompt("Ingresa el Titulo, Vacio para Omitir")
+            const titulo = document.createElement("b")
+            titulo.textContent = texto_titulo
+
+            // Pedir Elementos
+            let input = null
+            let elementos = []
+            do
+            {
+                input = prompt("Ingresa el Texto para el Elemento\n-0 para Salir")
+                if (input !== "0" && input !== "") elementos.push(input)
+            }
+            while(input !== "0")
+
+            // Si No hay Elementos, Salir
+            if (elementos.length === 0)
+            {
+                crear_placeholder_tarjeta()
+                break
+            }
+
+            // Agregar Titulo
+            lista.appendChild(titulo)
+            
+            // Agregar Elementos
+            elementos.forEach(elemento =>
+            {
+                const li = document.createElement("li")
+                li.textContent = elemento
+                lista.appendChild(li)
+            })
+
+            // Agregar a Tarjeta
+            contenedor_informacion.appendChild(lista)
+            tarjeta_activa.appendChild(contenedor_informacion)
             break
         }
         case "codigo":
         {
-            console.log("Codigo agregado")
+            // Crear Contenedor Informacion si no Existe
+            let contenedor_informacion = tarjeta_activa.querySelector(".tarjeta__informacion")
+            if (!contenedor_informacion)
+            {
+                contenedor_informacion = document.createElement("div")
+                contenedor_informacion.classList.add("tarjeta__informacion")
+            }
+
+            // Pedir Codigo
+            const texto_codigo = prompt("Ingresa el Codigo a Copiar")
+            if (texto_codigo === null || texto_codigo === null) return
+            
+            const contenedor_texto_codigo = document.createElement("p") 
+            contenedor_texto_codigo.textContent = texto_codigo
+
+            // Crear Contenedor Codigo
+            const contenedor_codigo = document.createElement("div")
+            contenedor_codigo.classList.add("tarjeta__codigo", "bloque")
+
+            // Calcular ID
+            let id = canva.querySelectorAll(".codigo").length
+            console.log(id)
+
+            // Crear Boton
+            const btn_copiar = document.createElement("a")
+            btn_copiar.textContent = "Copiar "
+            btn_copiar.classList.add("copiar")
+            btn_copiar.setAttribute("onclick", `copiarPortapapeles('codigo${id}')`)
+            contenedor_codigo.appendChild(btn_copiar)
+
+            // Crear Icono Boton
+            const icono = document.createElement("ion-icon")
+            icono.setAttribute("name", "clipboard-outline")
+            btn_copiar.appendChild(icono)
+
+            // Crear Bloque de Codigo
+            const codigo = document.createElement("span")
+            codigo.classList.add("codigo") 
+            codigo.id = `codigo${id}`
+            codigo.appendChild(contenedor_texto_codigo)
+            contenedor_codigo.appendChild(codigo)
+            
+            // Agregar a Tarjeta
+            contenedor_informacion.appendChild(contenedor_codigo)
+            tarjeta_activa.appendChild(contenedor_informacion)
             break
         }
-        case "select":
-        {
-            console.log("Select agregado")
-            break
-        }
-        */
+        // case "select":
+        // {
+        //     console.log("Select agregado")
+        //     break
+        // }
+        
 
         case "boton_visitar":
         {
@@ -741,6 +903,84 @@ function agregar_elementos ()
         bloque.addEventListener("dragstart", dragstart_block)
         bloque.addEventListener("dragend", dragend_block)
 
+        // Boton Agregar Elementos (Listas)
+        if (bloque.classList.contains("tarjeta__lista"))
+        {
+            if (!bloque.querySelector(".btn_agregar_elementos"))
+            {
+                const btn_agregar_elementos = document.createElement("button")
+                btn_agregar_elementos.classList.add("btn_agregar_elementos")
+                btn_agregar_elementos.textContent = "➕"
+                btn_agregar_elementos.addEventListener("click", e =>
+                {
+                    e.stopPropagation()
+
+                    // Pedir Elementos
+                    let input = null
+                    let elementos = []
+                    do
+                    {
+                        input = prompt("Ingresa el Texto para el Elemento Nuevo\n-0 para Salir")
+                        if (input !== "0") elementos.push(input)
+                    }
+                    while(input !== "0" || input == null)
+                    
+                    // Agregar Elementos
+                    elementos.forEach(elemento =>
+                    {
+                        const li = document.createElement("li")
+                        li.textContent = elemento
+                        bloque.appendChild(li)
+                    })
+                    recargar_html()
+                })
+                bloque.appendChild(btn_agregar_elementos)
+            }
+        }
+
+        // Boton Agregar Elementos (Sliders)
+        else if (bloque.classList.contains("slider"))
+        {
+            if (!bloque.querySelector(".btn_agregar_elementos"))
+            {
+                const btn_agregar_elementos = document.createElement("button")
+                btn_agregar_elementos.classList.add("btn_agregar_elementos")
+                btn_agregar_elementos.textContent = "➕"
+                btn_agregar_elementos.addEventListener("click", e =>
+                {
+                    e.stopPropagation()
+
+                    // Pedir Elementos
+                    let input = null
+                    let rutas = []
+                    do
+                    {
+                        input = prompt("Ingresa la Nueva Ruta Nuevo\n-0 para Salir")
+                        if (input !== "0") rutas.push(input)
+                    }
+                    while(input !== "0")
+                    
+                    // Agregar Elementos
+                    const contenedor_imagenes = bloque.querySelector(".slider__imagenes")
+                    rutas.forEach(ruta =>
+                    {
+
+                        const imagen = document.createElement("img")
+                        imagen.classList.add("slider__imagen")
+                        imagen.src = ruta
+                        imagen.onerror = function() {
+                            imagen.src = obtener_ruta_aleatoria()
+                            recargar_html()
+                        }
+                        contenedor_imagenes.appendChild(imagen)
+                    })
+                    recargar_sliders()
+                    recargar_html()
+                })
+                bloque.appendChild(btn_agregar_elementos)
+            }
+        }
+
         // Solo Agregar Boton Editar si no Tiene Uno
         if (!bloque.querySelector(".btn_editar_bloque"))
         {
@@ -798,8 +1038,8 @@ function agregar_elementos ()
 
                 // Cargar Ruta por Defecto si hay Error
                 imagen.onerror = function() {
-                    imagen_fondo.src = ruta_imagen_defecto
-                    imagen.src = ruta_imagen_defecto
+                    imagen_fondo.src = obtener_ruta_aleatoria()
+                    imagen.src = imagen_fondo.src
                     recargar_html()
                 }
                 
@@ -938,6 +1178,9 @@ function editar_bloque(bloque)
     else if (bloque.classList.contains("tarjeta__fecha")) tipo_bloque = "fecha"
     else if (bloque.classList.contains("tarjeta__subtitulo")) tipo_bloque = "subtitulo"
     else if (bloque.classList.contains("tarjeta__descripcion")) tipo_bloque = "descripcion"
+    else if (bloque.classList.contains("slider")) tipo_bloque = "slider"
+    else if (bloque.classList.contains("tarjeta__lista")) tipo_bloque = "lista"
+    else if (bloque.classList.contains("tarjeta__codigo")) tipo_bloque = "codigo"
     else if (bloque.classList.contains("div__boton")) tipo_bloque = "boton"
 
     // Identificar el Tipo de Bloque
@@ -969,6 +1212,105 @@ function editar_bloque(bloque)
             const texto_actual = obtener_texto(bloque)
             const nuevo_texto = prompt("📄Edita el Texto del Parrafo", texto_actual)
             if (nuevo_texto !== null && nuevo_texto !== "") actualizar_texto(bloque, nuevo_texto)
+            break
+        }
+        case "slider":
+        {
+            // Obtener contenedor de imágenes
+            const contenedor_imagenes = bloque.querySelector(".slider__imagenes")
+            if (!contenedor_imagenes) break
+
+            // Convertir a array para evitar problemas al eliminar hijos durante el loop
+            const imagenes = Array.from(contenedor_imagenes.querySelectorAll(".slider__imagen"))
+
+            // Recorrer Todas las Imágenes
+            for (let i = 0; i < imagenes.length; i++)
+            {
+                const imagen = imagenes[i]
+
+                // Pedir Ruta Nueva
+                const ruta_vieja = imagen.src
+                const ruta_nueva = prompt(`📄Edita la Ruta de la Imagen ${i + 1}\n-Vacio para Eliminar\n-0 para Salir`, ruta_vieja)
+
+                // Salir si Ingresa 0, Eliminar si esta Vacio, sino Cambiar Ruta
+                if (ruta_nueva == "0" || ruta_nueva == null) break
+                else if (ruta_nueva == "")
+                {
+                    imagen.remove()
+                    
+                    // Si el contenedor no tiene mas imágenes, eliminar el slider
+                    if (contenedor_imagenes.querySelectorAll(".slider__imagen").length === 0)
+                    {
+                        bloque.remove()
+                        crear_placeholder_tarjeta()
+                        recargar_sliders()
+                        break
+                    }
+                }
+                else
+                {
+                    imagen.src = ruta_nueva
+                    imagen.onerror = function() {
+                        imagen.src = obtener_ruta_aleatoria()
+                        recargar_html()
+                    }
+                }
+            }
+            
+            recargar_sliders()
+            break
+        }
+        case "lista":
+        {
+            // Convertir a array para evitar problemas al eliminar hijos durante el loop
+            const elementos = Array.from(bloque.getElementsByTagName("*"))
+
+            // Recorrer Todos los Elementos
+            for (let i = 0; i < elementos.length; i++)
+            {
+                const elemento = elementos[i];
+                console.log(elemento)
+
+                // Pedir Titulo
+                if (elemento.tagName == "B")
+                {
+                    const texto_viejo_titulo = elemento.textContent
+                    const texto_nuevo_titulo = prompt("📄Edita el Titulo de la Lista", texto_viejo_titulo)
+                    elemento.textContent = texto_nuevo_titulo
+                }
+
+                // Editar Elementos
+                if (elemento.tagName == "LI")
+                {
+                    // Pedir Texto Nuevo
+                    const texto_viejo = elemento.textContent
+                    const texto_nuevo = prompt(`📄Edita el Texto de la Lista\n-Vacio para Eliminar\n-0 para Salir`, texto_viejo)
+
+                    // Salir si Ingresa 0, Eliminar si esta Vacio, sino Cambiar Texto
+                    if (texto_nuevo == "0" || texto_nuevo == null) break
+                    else if (texto_nuevo == "")
+                    {
+                        const ul_padre = elemento.closest("UL")
+                        elemento.remove()
+                        
+                        // Si el UL no tiene mas LI, eliminarlo
+                        if (ul_padre && ul_padre.querySelectorAll("LI").length === 0)
+                        {
+                            ul_padre.remove()
+                            crear_placeholder_tarjeta()
+                        }
+                    }
+                    else elemento.textContent = texto_nuevo
+                }
+            }
+            break;
+        }
+        case "codigo":
+        {
+            const codigo = tarjeta_activa.querySelector(".codigo")
+            const texto_actual = obtener_texto(codigo)
+            const texto_nuevo = prompt("📄Edita el texto del Codigo", texto_actual)
+            if (texto_nuevo !== null && texto_nuevo !== "") actualizar_texto(codigo, texto_nuevo)
             break
         }
         case "boton":
@@ -1022,4 +1364,16 @@ function obtener_anterior(container, y, clase)
         if (offset < 0 && offset > closest.offset) return { offset: offset, element: child }
         else return closest
     }, { offset: Number.NEGATIVE_INFINITY }).element
+}
+
+// Funcion Copiar al Portapapeles
+function copiarPortapapeles(ruta)                           // Funcion que recibe 1 parametro
+{
+	let aux = document.createElement("textarea");           // Creo variable que guarda un "textarea"
+	aux.value = document.getElementById(ruta).innerText;    // Agrego el valor que quiero copiar al "textarea"
+	document.body.appendChild(aux);                         // Agrego el "textarea" al body
+	aux.select();                                           // Selecciono lo que tiene el "textarea"
+	document.execCommand("copy");                           // Ejecuto comando para copiar
+	document.body.removeChild(aux);                         // Elimino "textarea" del body
+    alert("Copiado al Portapales");                         // Muestro mensaje
 }
