@@ -1,6 +1,7 @@
 
 /* === Mostrar/Ocultar HTML Generado (Falta Mostrar HTML 📌) === */
 const canva = document.querySelector("#canva")
+let numero_tarjetas = 0
 const btn_previsualizar_html = document.querySelector("#previsualizar_html")
 const panel_html_generado = document.querySelector("#panel_html_generado")
 recargar_html()
@@ -18,7 +19,7 @@ btn_previsualizar_html.addEventListener("click", () =>
 function recargar_html ()
 {
     const copia_canva = canva.cloneNode(true) // Clonar Canva
-    const contenedor_titulos = document.querySelector(".titulos_superiores") // Contenedor Titulos 
+    const contenedor_titulos = document.querySelector(".titulos_superiores") // Contenedor Titulos
     const texto_titulo_pagina = contenedor_titulos.querySelector(".titulo_pagina").textContent // Obtener Titulo
     const texto_subtitulo_pagina = contenedor_titulos.querySelector(".subtitulo_pagina").textContent // Obtener Subtitulo
     const preview_tarjetas = document.querySelector(".tarjetas") // Contenedor tarjetas Preview
@@ -49,10 +50,445 @@ function recargar_html ()
 
 
 
+
+/* === Cargar HTML Existente === */
+const btn_cargar = document.querySelector("#cargar_html")
+const input_html = document.querySelector("#input_file")
+
+// Listeners
+btn_cargar.addEventListener("click", () => input_html.click() )
+input_file.addEventListener("change", e =>
+{
+    const file = e.target.files[0]
+    if (!file) return
+
+    // Leer HTML
+    const reader = new FileReader()
+    reader.onload = function(event)
+    {
+        const html_content = event.target.result
+        parsear_html(html_content)
+    }
+    reader.readAsText(file)
+})
+
+function parsear_html(html_string)
+{
+    // Crear Parser Temporal
+    const parser = new DOMParser()
+    const documento_cargado = parser.parseFromString(html_string, 'text/html')
+
+    // Limpiar Canva Actual
+    canva.innerHTML = ''
+    numero_tarjetas = 0
+    tarjeta_activa = null
+    
+    // Cargar Títulos si Existen
+    const titulo_doc = documento_cargado.querySelector('.titulos__titulo')
+    const subtitulo_doc = documento_cargado.querySelector('.titulos__subtitulo')
+    
+    // Cargar Texto de Titulos
+    if (titulo_doc) titulo_pagina.textContent = titulo_doc.textContent
+    if (subtitulo_doc) subtitulo_pagina.textContent = subtitulo_doc.textContent
+    
+    // Verificar si los Títulos Estan Centrados
+    const titulos_doc = documento_cargado.querySelector('.titulos')
+    if (titulos_doc && titulos_doc.classList.contains('centro'))
+    {
+        contenedor_titulos.classList.add('centrados')
+        btn_centrar_titulos.textContent = "↔️Titulos Centrados"
+    }
+    else
+    {
+        contenedor_titulos.classList.remove('centrados')
+        btn_centrar_titulos.textContent = "⬅️Lado Izquierdo"
+    }
+    
+    // Verificar Modo de Tarjetas
+    const tarjetas_doc = documento_cargado.querySelector('.tarjetas')
+    if (tarjetas_doc && tarjetas_doc.classList.contains('vertical'))
+    {
+        canva.classList.add('vertical')
+        btn_cambiar_modo.textContent = "↕️Modo Vertical"
+    }
+    else
+    {
+        canva.classList.remove('vertical')
+        btn_cambiar_modo.textContent = "#️⃣Modo Cuadricula"
+    }
+    
+    // Obtener Todas las Tarjetas
+    const tarjetas_documento_cargado = documento_cargado.querySelectorAll('.tarjeta')
+    
+    // Si no Hay Tarjetas Agregar Placeholder
+    if (tarjetas_documento_cargado.length === 0)
+    {
+        const placeholder = document.createElement("p")
+        placeholder.className = "placeholder_canva"
+        placeholder.textContent = "⭐Crea una Tarjeta o Arrastra un Elemento"
+        canva.appendChild(placeholder)
+        return
+    }
+    
+    // Reconstruir Cada Tarjeta
+    tarjetas_documento_cargado.forEach(tarjeta_cargada => reconstruir_tarjeta(tarjeta_cargada) )
+    recargar_html()
+}
+
+function reconstruir_tarjeta(tarjeta_cargada) {
+    // Crear nueva tarjeta
+    const tarjeta_nueva = document.createElement("section")
+    tarjeta_nueva.classList.add("tarjeta")
+    
+    // Botón Eliminar Tarjeta
+    const boton_eliminar_tarjeta = document.createElement("button")
+    boton_eliminar_tarjeta.textContent = "🗑️"
+    boton_eliminar_tarjeta.classList.add("btn_eliminar_tarjeta")
+    tarjeta_nueva.appendChild(boton_eliminar_tarjeta)
+    boton_eliminar_tarjeta.addEventListener("click", e => {
+        e.stopPropagation()
+        eliminar_tarjeta(tarjeta_nueva)
+    })
+    
+    // Copiar contenedor de imágenes si existe
+    const contenedor_imagenes_original = tarjeta_cargada.querySelector('.tarjeta__imagenes')
+    if (contenedor_imagenes_original) {
+        const contenedor_imagenes = contenedor_imagenes_original.cloneNode(true)
+        tarjeta_nueva.appendChild(contenedor_imagenes)
+        
+        // Agregar botones de edición a la imagen
+        agregar_botones_imagen(tarjeta_nueva)
+    }
+    
+    // Copiar contenedor de información si existe
+    const contenedor_info_original = tarjeta_cargada.querySelector('.tarjeta__informacion')
+    if (contenedor_info_original) {
+        const contenedor_info = contenedor_info_original.cloneNode(true)
+        tarjeta_nueva.appendChild(contenedor_info)
+        
+        // Identificar y procesar todos los elementos que son "bloques"
+        const bloques_identificados = identificar_bloques(contenedor_info)
+        bloques_identificados.forEach(bloque => {
+            // Agregar clase bloque si no la tiene
+            if (!bloque.classList.contains('bloque')) {
+                bloque.classList.add('bloque')
+            }
+            bloque.setAttribute('draggable', 'true')
+            agregar_eventos_bloque(bloque, tarjeta_nueva)
+        })
+    }
+    
+    // Agregar eventos de la tarjeta
+    agregar_eventos_tarjeta(tarjeta_nueva)
+    
+    // Agregar al canva
+    canva.appendChild(tarjeta_nueva)
+    numero_tarjetas++
+}
+
+function identificar_bloques(contenedor) {
+    const bloques = []
+    
+    // Selector para todos los tipos de bloques posibles
+    const selectores = [
+        '.tarjeta__titulo',
+        '.tarjeta__fecha',
+        '.tarjeta__subtitulo',
+        '.tarjeta__descripcion',
+        '.tarjeta__lista',
+        '.tarjeta__codigo',
+        '.slider',
+        '.div__boton'
+    ]
+    
+    // Buscar cada tipo de bloque
+    selectores.forEach(selector => {
+        const elementos = contenedor.querySelectorAll(selector)
+        elementos.forEach(elemento => {
+            // Verificar que el elemento esté directamente en tarjeta__informacion
+            // y no esté anidado dentro de otro bloque (como slider dentro de otro elemento)
+            if (elemento.parentElement === contenedor || 
+                elemento.parentElement.classList.contains('tarjeta__informacion')) {
+                bloques.push(elemento)
+            }
+        })
+    })
+    
+    return bloques
+}
+function agregar_eventos_tarjeta(tarjeta)
+{
+    // Evento Click
+    tarjeta.addEventListener("click", e =>
+    {
+        e.stopPropagation()
+        desactivar_tarjetas_anteriores()
+        
+        if (tarjeta_activa == tarjeta)
+        {
+            desactivar_tarjetas_anteriores()
+            tarjeta_activa = null
+        }
+        else activar_tarjeta(tarjeta)
+    })
+    
+    // Eventos de Drag and Drop
+    tarjeta.addEventListener("dragstart", e =>
+    {
+        e.stopPropagation()
+        tarjeta.classList.add("tarjeta_dragging")
+    })
+    tarjeta.addEventListener("dragend", e =>
+    {
+        e.stopPropagation()
+        tarjeta.classList.remove("tarjeta_dragging")
+    })
+    tarjeta.addEventListener("dragleave", e =>
+    {
+        e.stopPropagation()
+        tarjeta.classList.remove("tarjeta_hover")
+    })
+    tarjeta.addEventListener("dragover", e =>
+    {
+        e.stopPropagation()
+        e.preventDefault()
+        
+        if (tarjeta.classList.contains("activa") && reordenamiento_bloques)
+        {
+            const contenedor_informacion = tarjeta.querySelector(".tarjeta__informacion")
+            if (contenedor_informacion)
+            {
+                const bloque_anterior = obtener_anterior(contenedor_informacion, e.clientY, ".bloque:not(.block_dragging)")
+                const bloque_arrastrado = tarjeta.querySelector(".block_dragging")
+                
+                if (bloque_arrastrado)
+                {
+                    if (bloque_anterior == null) contenedor_informacion.appendChild(bloque_arrastrado)
+                    else contenedor_informacion.insertBefore(bloque_arrastrado, bloque_anterior)
+                }
+            }
+            recargar_html()
+        }
+        else if (reordenamiento_tarjetas)
+        {
+            const tarjeta_anterior = obtener_anterior(canva, e.clientY, ".tarjeta:not(.tarjeta_dragging)")
+            const tarjeta_arrastrada = document.querySelector(".tarjeta_dragging")
+            
+            if (tarjeta_arrastrada)
+            {
+                if (tarjeta_anterior == null) canva.appendChild(tarjeta_arrastrada)
+                else canva.insertBefore(tarjeta_arrastrada, tarjeta_anterior)
+            }
+            recargar_html()
+        }
+        else if (tarjeta.classList.contains("activa") && tipo_elemento && !reordenamiento_tarjetas) tarjeta.classList.add("tarjeta_hover")
+    })
+    tarjeta.addEventListener("drop", e =>
+    {
+        e.stopPropagation()
+        tarjeta.classList.remove("tarjeta_hover")
+        
+        if (tarjeta.classList.contains("activa") && tipo_elemento)
+        {
+            tarjeta_activa = tarjeta
+            agregar_elementos()
+        }
+    })
+}
+
+function agregar_eventos_bloque(bloque, tarjeta)
+{
+    bloque.addEventListener("dragstart", dragstart_block)
+    bloque.addEventListener("dragend", dragend_block)
+    
+    // Botón editar
+    if (!bloque.querySelector(".btn_editar_bloque"))
+    {
+        const btn_editar = document.createElement("button")
+        btn_editar.classList.add("btn_editar_bloque")
+        btn_editar.textContent = "✏️"
+        btn_editar.addEventListener("click", e => {
+            e.stopPropagation()
+            tarjeta_activa = tarjeta
+            editar_bloque(bloque)
+        })
+        bloque.appendChild(btn_editar)
+    }
+    
+    // Botón eliminar
+    if (!bloque.querySelector(".btn_eliminar_bloque"))
+    {
+        const btn_eliminar = document.createElement("button")
+        btn_eliminar.classList.add("btn_eliminar_bloque")
+        btn_eliminar.textContent = "🗑️"
+        btn_eliminar.addEventListener("click", e =>
+        {
+            e.stopPropagation()
+            tarjeta_activa = tarjeta
+            bloque.remove()
+            crear_placeholder_tarjeta()
+            recargar_html()
+        })
+        bloque.appendChild(btn_eliminar)
+    }
+    
+    // Botones especiales para listas y sliders
+    if (bloque.classList.contains("tarjeta__lista") && !bloque.querySelector(".btn_agregar_elementos"))
+    {
+        const btn_agregar = document.createElement("button")
+        btn_agregar.classList.add("btn_agregar_elementos")
+        btn_agregar.textContent = "➕"
+        btn_agregar.addEventListener("click", e =>
+        {
+            e.stopPropagation()
+            tarjeta_activa = tarjeta
+            
+            let input = null
+            let elementos = []
+            do
+            {
+                input = prompt("Ingresa el Texto para el Elemento Nuevo\n-0 para Salir")
+                if (input !== "0" && input !== null) elementos.push(input)
+            } while(input !== "0" && input !== null)
+            
+            elementos.forEach(elemento =>
+            {
+                const li = document.createElement("li")
+                li.textContent = elemento
+                bloque.appendChild(li)
+            })
+            recargar_html()
+        })
+        bloque.appendChild(btn_agregar)
+    }
+    
+    if (bloque.classList.contains("slider") && !bloque.querySelector(".btn_agregar_elementos"))
+    {
+        const btn_agregar = document.createElement("button")
+        btn_agregar.classList.add("btn_agregar_elementos")
+        btn_agregar.textContent = "➕"
+        btn_agregar.addEventListener("click", e =>
+        {
+            e.stopPropagation()
+            tarjeta_activa = tarjeta
+            
+            let input = null
+            let rutas = []
+            do
+            {
+                input = prompt("Ingresa la Nueva Ruta\n-0 para Salir")
+                if (input !== "0" && input !== null) rutas.push(input)
+            } while(input !== "0" && input !== null)
+            
+            const contenedor_imagenes = bloque.querySelector(".slider__imagenes")
+            rutas.forEach(ruta =>
+            {
+                const imagen = document.createElement("img")
+                imagen.classList.add("slider__imagen")
+                imagen.src = ruta
+                imagen.onerror = function()
+                {
+                    imagen.src = obtener_ruta_aleatoria()
+                    recargar_html()
+                }
+                contenedor_imagenes.appendChild(imagen)
+            })
+            recargar_sliders()
+            recargar_html()
+        })
+        bloque.appendChild(btn_agregar)
+    }
+}
+
+function agregar_botones_imagen(tarjeta)
+{
+    const contenedor_imagen = tarjeta.querySelector(".tarjeta__imagenes")
+    if (!contenedor_imagen) return
+    
+    // Botón editar
+    if (!contenedor_imagen.querySelector(".btn_editar_imagen"))
+    {
+        const btn_editar = document.createElement("button")
+        btn_editar.classList.add("btn_editar_imagen")
+        btn_editar.textContent = "✏️"
+        btn_editar.addEventListener("click", e =>
+        {
+            e.stopPropagation()
+            tarjeta_activa = tarjeta
+            
+            const imagen = contenedor_imagen.querySelector(".tarjeta__imagen")
+            const imagen_fondo = contenedor_imagen.querySelector(".tarjeta__imagen-fondo")
+            const nueva_ruta = prompt("🔗Edita la Ruta de la Imagen", imagen.src)
+            
+            if (nueva_ruta !== null && nueva_ruta !== "")
+            {
+                imagen.src = nueva_ruta
+                imagen_fondo.src = nueva_ruta
+            }
+            
+            imagen.onerror = function()
+        {
+                imagen_fondo.src = obtener_ruta_aleatoria()
+                imagen.src = imagen_fondo.src
+                recargar_html()
+            }
+            
+            let etiqueta = contenedor_imagen.querySelector(".etiqueta__titulo")
+            if (etiqueta)
+            {
+                const texto_nueva_etiqueta = prompt("📄Edita el Texto de la Etiqueta", etiqueta.textContent)
+
+                if (texto_nueva_etiqueta == null || texto_nueva_etiqueta == "") etiqueta.closest(".etiqueta").remove()
+                else etiqueta.textContent = texto_nueva_etiqueta
+            }
+            else
+            {
+                const texto_etiqueta = prompt("📄Agregar Texto de Etiqueta (Vacío para Omitir)")
+                if (texto_etiqueta != null && texto_etiqueta != "") {
+                    const contenedor_etiqueta = document.createElement("div")
+                    contenedor_etiqueta.classList.add("etiqueta")
+                    
+                    const nueva_etiqueta = document.createElement("p")
+                    nueva_etiqueta.classList.add("etiqueta__titulo")
+                    nueva_etiqueta.textContent = texto_etiqueta
+                    contenedor_etiqueta.appendChild(nueva_etiqueta)
+                    
+                    contenedor_imagen.appendChild(contenedor_etiqueta)
+                }
+            }
+            recargar_html()
+        })
+        contenedor_imagen.appendChild(btn_editar)
+    }
+    
+    // Botón eliminar
+    if (!contenedor_imagen.querySelector(".btn_eliminar_imagen"))
+    {
+        const btn_eliminar = document.createElement("button")
+        btn_eliminar.classList.add("btn_eliminar_imagen")
+        btn_eliminar.textContent = "🗑️"
+        btn_eliminar.addEventListener("click", e =>
+        {
+            e.stopPropagation()
+            tarjeta_activa = tarjeta
+            contenedor_imagen.remove()
+            crear_placeholder_tarjeta()
+            recargar_html()
+        })
+        contenedor_imagen.appendChild(btn_eliminar)
+    }
+}
+
+
+
+
+
+
+
+
 /* === Reordenamiento de Tarjetas ✅ === */
 const boton_reordenar_tarjetas = document.querySelector("#reordenar_tarjetas")
 const listas_elementos = document.querySelectorAll(".lista_elementos")
-let numero_tarjetas = 0
 let reordenamiento_tarjetas = false
 
 // Boton Reordenamiento de Tarjetas
@@ -338,7 +774,7 @@ function crear_tarjeta ()
     
     // Agregar Tarjeta al Canva y Obtener Numero Tarjetas
     canva.appendChild(tarjeta_nueva)
-    numero_tarjetas = canva.querySelectorAll(".tarjeta").length
+    numero_tarjetas++
 
     recargar_html()
 }
@@ -346,7 +782,7 @@ function eliminar_tarjeta (tarjeta)
 {
     // Eliminar Tarjeta y Obtener Numero Tarjetas
     tarjeta.remove()
-    numero_tarjetas = canva.querySelectorAll(".tarjeta").length
+    numero_tarjetas--
 
     // Verificar si ya NO hay mas Tarjetas
     if (numero_tarjetas == 0)
