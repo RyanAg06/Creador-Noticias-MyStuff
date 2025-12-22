@@ -415,7 +415,31 @@ function activar_tarjeta (tarjeta)
 
 
 
+import { abrir_modal, cerrar_modal } from "./modal_agregar_imagen.js";
 
+class Base64Image {
+    static encode(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    static decode(base64String, filename = 'archivo') {
+        // Este metodo no se usa aun, pero esta aqui por si acaso
+        const arr = base64String.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, { type: mime });
+    }
+}
 
 
 
@@ -451,69 +475,80 @@ function agregar_elementos ()
     {
         case "imagen":
         {
-            // Crear Contenedor Imagenes si no Existe (Solo 1 Por Tarjeta)
-            let contenedor_imagen = tarjeta_activa.querySelector(".tarjeta__imagenes")
-            if (!contenedor_imagen)
-            {
-                contenedor_imagen = document.createElement("div")
-                contenedor_imagen.classList.add("tarjeta__imagenes")
-            }
-            else
+            if (tarjeta_activa.querySelector(".tarjeta__imagenes"))
             {
                 alert("🚫Solo Puedes Agregar Una Imagen Por Tarjeta, Usa un Slider")
                 return
             }
 
-            // Pedir Ruta de Imagen
-            const ruta = prompt("🔗Ingresa la Ruta de la Imagen")
-            if (ruta == null || ruta == "") return
+            abrir_modal();
 
-            // Crear Imagen Fondo
-            const imagen_fondo = document.createElement("img")
-            imagen_fondo.classList.add("tarjeta__imagen-fondo")
-            imagen_fondo.alt = "Imagen Fondo"
-            imagen_fondo.src = ruta
-            contenedor_imagen.appendChild(imagen_fondo)
+            document.getElementById('btn_agregar_imagen').onclick =  async() =>
+                {
+                // Crear Contenedor Imagenes si no Existe (Solo 1 Por Tarjeta)
+                console.log(tarjeta_activa)
+                let contenedor_imagen = tarjeta_activa.querySelector(".tarjeta__imagenes")
 
-            // Crear Imagen
-            const imagen = document.createElement("img")
-            imagen.classList.add("tarjeta__imagen")
-            imagen.alt = "Imagen"
-            imagen.src = ruta
-            contenedor_imagen.appendChild(imagen)
-
-            // Cargar Ruta por Defecto si hay Error
-            imagen.onerror = function() {
-                imagen_fondo.src = ruta_imagen_defecto
-                imagen.src = ruta_imagen_defecto
-                recargar_html()
+                contenedor_imagen = document.createElement("div")
+                contenedor_imagen.classList.add("tarjeta__imagenes")
+                
+                // Pedir Ruta de Imagen
+                const file = document.getElementById('input_imagen').files[0]
+                
+                const ruta = await Base64Image.encode(file)
+                
+                const texto_etiqueta = document.getElementById('input_texto_etiqueta').value
+                if (ruta == null || ruta == "") return
+    
+                // Crear Imagen Fondo
+                const imagen_fondo = document.createElement("img")
+                imagen_fondo.classList.add("tarjeta__imagen-fondo")
+                imagen_fondo.alt = "Imagen Fondo"
+                imagen_fondo.src = ruta
+                contenedor_imagen.appendChild(imagen_fondo)
+    
+                // Crear Imagen
+                const imagen = document.createElement("img")
+                imagen.classList.add("tarjeta__imagen")
+                imagen.alt = "Imagen"
+                imagen.src = ruta
+                contenedor_imagen.appendChild(imagen)
+    
+                // Cargar Ruta por Defecto si hay Error
+                imagen.onerror = function() {
+                    imagen_fondo.src = ruta_imagen_defecto
+                    imagen.src = ruta_imagen_defecto
+                    recargar_html()
+                }
+    
+    
+                // Agregar Etiqueta si NO esta Vacia
+                if (!texto_etiqueta == null || !texto_etiqueta == "")
+                {
+                    // Crear Contenedor Etiqueta
+                    const contenedor_etiqueta = document.createElement("div")
+                    contenedor_etiqueta.classList.add("etiqueta")
+    
+                    // Crear Etiqueta
+                    const etiqueta = document.createElement("p")
+                    etiqueta.classList.add("etiqueta__titulo")
+                    etiqueta.textContent = texto_etiqueta
+    
+                    // Agregar a Contenedores
+                    contenedor_etiqueta.appendChild(etiqueta)
+                    contenedor_imagen.appendChild(contenedor_etiqueta)
+                }
+    
+                // Agregar "Contenedor Imagenes" Antes de "Contenedor Informacion"
+                const contenedor_informacion = tarjeta_activa.querySelector(".tarjeta__informacion")
+                if (!contenedor_informacion) tarjeta_activa.appendChild(contenedor_imagen)
+                else tarjeta_activa.insertBefore(contenedor_imagen, contenedor_informacion)
+            
+                document.getElementById('btn_agregar_imagen').onclick = null; // ! Esto es importante porque si no se quita el evento, se ejecutara una vez mas cada vez que se clickee el boton
+                cerrar_modal();
             }
 
-            // Pedir Texto Etiqueta
-            const texto_etiqueta = prompt("📄Ingresa Texto de Etiqueta (Vacio para Omitir)")
-
-            // Agregar Etiqueta si NO esta Vacia
-            if (!texto_etiqueta == null || !texto_etiqueta == "")
-            {
-                // Crear Contenedor Etiqueta
-                const contenedor_etiqueta = document.createElement("div")
-                contenedor_etiqueta.classList.add("etiqueta")
-
-                // Crear Etiqueta
-                const etiqueta = document.createElement("p")
-                etiqueta.classList.add("etiqueta__titulo")
-                etiqueta.textContent = texto_etiqueta
-
-                // Agregar a Contenedores
-                contenedor_etiqueta.appendChild(etiqueta)
-                contenedor_imagen.appendChild(contenedor_etiqueta)
-            }
-
-            // Agregar "Contenedor Imagenes" Antes de "Contenedor Informacion"
-            const contenedor_informacion = tarjeta_activa.querySelector(".tarjeta__informacion")
-            if (!contenedor_informacion) tarjeta_activa.appendChild(contenedor_imagen)
-            else tarjeta_activa.insertBefore(contenedor_imagen, contenedor_informacion)
-            break
+            break;
         }
         case "titulo":
         {
