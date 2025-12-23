@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="./css/elementos.css">
         <link rel="stylesheet" href="./css/estilos.css">
+        <link rel="stylesheet" href="./css/modal_subir_imagen.css">
     </head>
 
 
@@ -14,7 +15,14 @@
 
         <!-- Titulo Superior -->
         <!-- <p class="titulo_superior">Editor MyStuff</p> -->
-
+        <div id="modal_subir_imagen">
+            <div>
+                <img id="previsualizacion_imagen" src="">
+                <input type="file" id="input_imagen" accept="image/*" >
+            </div>
+            <input id="input_texto_etiqueta" type="text" placeholder="Ingresa el texto de la etiqueta:">
+            <button id="btn_agregar_imagen">Agregar</button>
+        </div>
         <!-- Contenido -->
         <div id="contenido">
 
@@ -100,9 +108,10 @@
 
     <!-- Codigo JS -->
     <script src="./js/exportarHTML.js"></script>
-    <script src="./js/editor.js"></script>
     <script src="./js/slider.js"></script>
     <script src="./js/activarWindows.js"></script>
+    <script src="./js/editor.js" type="module"></script>
+    <script src="./js/modal_agregar_imagen.js" type="module"></script>
 
     <!-- Iconos -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
