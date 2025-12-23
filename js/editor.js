@@ -59,6 +59,7 @@ const input_html = document.querySelector("#input_file")
 btn_cargar.addEventListener("click", () => input_html.click() )
 input_file.addEventListener("change", e =>
 {
+    // Cargar HTML
     const file = e.target.files[0]
     if (!file) return
 
@@ -135,61 +136,45 @@ function parsear_html(html_string)
     recargar_html()
 }
 
-function reconstruir_tarjeta(tarjeta_cargada) {
-    // Crear nueva tarjeta
-    const tarjeta_nueva = document.createElement("section")
-    tarjeta_nueva.classList.add("tarjeta")
+function reconstruir_tarjeta(tarjeta_cargada)
+{
+    // Crear Tarjeta Nueva
+    const tarjeta_nueva = crear_tarjeta()
+    const placeholder = tarjeta_nueva.querySelector(".placeholder_tarjeta")
     
-    // Botón Eliminar Tarjeta
-    const boton_eliminar_tarjeta = document.createElement("button")
-    boton_eliminar_tarjeta.textContent = "🗑️"
-    boton_eliminar_tarjeta.classList.add("btn_eliminar_tarjeta")
-    tarjeta_nueva.appendChild(boton_eliminar_tarjeta)
-    boton_eliminar_tarjeta.addEventListener("click", e => {
-        e.stopPropagation()
-        eliminar_tarjeta(tarjeta_nueva)
-    })
-    
-    // Copiar contenedor de imágenes si existe
-    const contenedor_imagenes_original = tarjeta_cargada.querySelector('.tarjeta__imagenes')
-    if (contenedor_imagenes_original) {
-        const contenedor_imagenes = contenedor_imagenes_original.cloneNode(true)
+    // Crear Contenedor de Imagenes si Existe
+    const contenedor_imagenes = tarjeta_cargada.querySelector('.tarjeta__imagenes')
+    if (contenedor_imagenes)
+    {
         tarjeta_nueva.appendChild(contenedor_imagenes)
-        
-        // Agregar botones de edición a la imagen
+        placeholder.remove()
         agregar_botones_imagen(tarjeta_nueva)
     }
     
-    // Copiar contenedor de información si existe
-    const contenedor_info_original = tarjeta_cargada.querySelector('.tarjeta__informacion')
-    if (contenedor_info_original) {
-        const contenedor_info = contenedor_info_original.cloneNode(true)
-        tarjeta_nueva.appendChild(contenedor_info)
+    // Crear Contenedor de Informacion si Existe
+    const contenedor_informacion = tarjeta_cargada.querySelector('.tarjeta__informacion')
+    if (contenedor_informacion)
+    {
+        // Crear Contenedor y Eliminar Placeholder
+        tarjeta_nueva.appendChild(contenedor_informacion)
+        placeholder.remove()
         
-        // Identificar y procesar todos los elementos que son "bloques"
-        const bloques_identificados = identificar_bloques(contenedor_info)
-        bloques_identificados.forEach(bloque => {
-            // Agregar clase bloque si no la tiene
-            if (!bloque.classList.contains('bloque')) {
-                bloque.classList.add('bloque')
-            }
+        // Agregar Clase "bloque" a los Elementos Dentro de Contenedor Informacion
+        const bloques_identificados = identificar_bloques(contenedor_informacion)
+        bloques_identificados.forEach(bloque =>
+        {
+            if (!bloque.classList.contains('bloque')) bloque.classList.add('bloque')
             bloque.setAttribute('draggable', 'true')
             agregar_eventos_bloque(bloque, tarjeta_nueva)
         })
     }
-    
-    // Agregar eventos de la tarjeta
-    agregar_eventos_tarjeta(tarjeta_nueva)
-    
-    // Agregar al canva
-    canva.appendChild(tarjeta_nueva)
-    numero_tarjetas++
+    recargar_html()
+    recargar_sliders()
 }
 
-function identificar_bloques(contenedor) {
+function identificar_bloques(contenedor)
+{
     const bloques = []
-    
-    // Selector para todos los tipos de bloques posibles
     const selectores = [
         '.tarjeta__titulo',
         '.tarjeta__fecha',
@@ -201,99 +186,16 @@ function identificar_bloques(contenedor) {
         '.div__boton'
     ]
     
-    // Buscar cada tipo de bloque
-    selectores.forEach(selector => {
+    // Buscar Cada Tipo de Bloque
+    selectores.forEach(selector =>
+    {
         const elementos = contenedor.querySelectorAll(selector)
-        elementos.forEach(elemento => {
-            // Verificar que el elemento esté directamente en tarjeta__informacion
-            // y no esté anidado dentro de otro bloque (como slider dentro de otro elemento)
-            if (elemento.parentElement === contenedor || 
-                elemento.parentElement.classList.contains('tarjeta__informacion')) {
-                bloques.push(elemento)
-            }
+        elementos.forEach(elemento =>
+        {
+            if (elemento.parentElement === contenedor || elemento.parentElement.classList.contains('tarjeta__informacion')) { bloques.push(elemento) }
         })
     })
-    
     return bloques
-}
-function agregar_eventos_tarjeta(tarjeta)
-{
-    // Evento Click
-    tarjeta.addEventListener("click", e =>
-    {
-        e.stopPropagation()
-        desactivar_tarjetas_anteriores()
-        
-        if (tarjeta_activa == tarjeta)
-        {
-            desactivar_tarjetas_anteriores()
-            tarjeta_activa = null
-        }
-        else activar_tarjeta(tarjeta)
-    })
-    
-    // Eventos de Drag and Drop
-    tarjeta.addEventListener("dragstart", e =>
-    {
-        e.stopPropagation()
-        tarjeta.classList.add("tarjeta_dragging")
-    })
-    tarjeta.addEventListener("dragend", e =>
-    {
-        e.stopPropagation()
-        tarjeta.classList.remove("tarjeta_dragging")
-    })
-    tarjeta.addEventListener("dragleave", e =>
-    {
-        e.stopPropagation()
-        tarjeta.classList.remove("tarjeta_hover")
-    })
-    tarjeta.addEventListener("dragover", e =>
-    {
-        e.stopPropagation()
-        e.preventDefault()
-        
-        if (tarjeta.classList.contains("activa") && reordenamiento_bloques)
-        {
-            const contenedor_informacion = tarjeta.querySelector(".tarjeta__informacion")
-            if (contenedor_informacion)
-            {
-                const bloque_anterior = obtener_anterior(contenedor_informacion, e.clientY, ".bloque:not(.block_dragging)")
-                const bloque_arrastrado = tarjeta.querySelector(".block_dragging")
-                
-                if (bloque_arrastrado)
-                {
-                    if (bloque_anterior == null) contenedor_informacion.appendChild(bloque_arrastrado)
-                    else contenedor_informacion.insertBefore(bloque_arrastrado, bloque_anterior)
-                }
-            }
-            recargar_html()
-        }
-        else if (reordenamiento_tarjetas)
-        {
-            const tarjeta_anterior = obtener_anterior(canva, e.clientY, ".tarjeta:not(.tarjeta_dragging)")
-            const tarjeta_arrastrada = document.querySelector(".tarjeta_dragging")
-            
-            if (tarjeta_arrastrada)
-            {
-                if (tarjeta_anterior == null) canva.appendChild(tarjeta_arrastrada)
-                else canva.insertBefore(tarjeta_arrastrada, tarjeta_anterior)
-            }
-            recargar_html()
-        }
-        else if (tarjeta.classList.contains("activa") && tipo_elemento && !reordenamiento_tarjetas) tarjeta.classList.add("tarjeta_hover")
-    })
-    tarjeta.addEventListener("drop", e =>
-    {
-        e.stopPropagation()
-        tarjeta.classList.remove("tarjeta_hover")
-        
-        if (tarjeta.classList.contains("activa") && tipo_elemento)
-        {
-            tarjeta_activa = tarjeta
-            agregar_elementos()
-        }
-    })
 }
 
 function agregar_eventos_bloque(bloque, tarjeta)
@@ -301,13 +203,14 @@ function agregar_eventos_bloque(bloque, tarjeta)
     bloque.addEventListener("dragstart", dragstart_block)
     bloque.addEventListener("dragend", dragend_block)
     
-    // Botón editar
+    // Botón Editar
     if (!bloque.querySelector(".btn_editar_bloque"))
     {
         const btn_editar = document.createElement("button")
         btn_editar.classList.add("btn_editar_bloque")
         btn_editar.textContent = "✏️"
-        btn_editar.addEventListener("click", e => {
+        btn_editar.addEventListener("click", e =>
+        {
             e.stopPropagation()
             tarjeta_activa = tarjeta
             editar_bloque(bloque)
@@ -315,7 +218,7 @@ function agregar_eventos_bloque(bloque, tarjeta)
         bloque.appendChild(btn_editar)
     }
     
-    // Botón eliminar
+    // Botón Eliminar
     if (!bloque.querySelector(".btn_eliminar_bloque"))
     {
         const btn_eliminar = document.createElement("button")
@@ -327,12 +230,11 @@ function agregar_eventos_bloque(bloque, tarjeta)
             tarjeta_activa = tarjeta
             bloque.remove()
             crear_placeholder_tarjeta()
-            recargar_html()
         })
         bloque.appendChild(btn_eliminar)
     }
     
-    // Botones especiales para listas y sliders
+    // Boton Agregar Elementos en Listas
     if (bloque.classList.contains("tarjeta__lista") && !bloque.querySelector(".btn_agregar_elementos"))
     {
         const btn_agregar = document.createElement("button")
@@ -361,7 +263,8 @@ function agregar_eventos_bloque(bloque, tarjeta)
         })
         bloque.appendChild(btn_agregar)
     }
-    
+
+    // Boton Agregar Elementos en Sliders
     if (bloque.classList.contains("slider") && !bloque.querySelector(".btn_agregar_elementos"))
     {
         const btn_agregar = document.createElement("button")
@@ -389,7 +292,7 @@ function agregar_eventos_bloque(bloque, tarjeta)
                 imagen.onerror = function()
                 {
                     imagen.src = obtener_ruta_aleatoria()
-                    recargar_html()
+                    recargar_sliders()
                 }
                 contenedor_imagenes.appendChild(imagen)
             })
@@ -427,7 +330,7 @@ function agregar_botones_imagen(tarjeta)
             }
             
             imagen.onerror = function()
-        {
+            {
                 imagen_fondo.src = obtener_ruta_aleatoria()
                 imagen.src = imagen_fondo.src
                 recargar_html()
@@ -473,7 +376,6 @@ function agregar_botones_imagen(tarjeta)
             tarjeta_activa = tarjeta
             contenedor_imagen.remove()
             crear_placeholder_tarjeta()
-            recargar_html()
         })
         contenedor_imagen.appendChild(btn_eliminar)
     }
@@ -657,7 +559,7 @@ btn_crear_tarjeta.addEventListener("click", e =>
     e.stopPropagation()
     crear_tarjeta()
 })
-function crear_tarjeta ()
+function crear_tarjeta()
 {
     // Eliminar Placeholder si Existe y Desactivar Anteriores
     const placeholder_canva = canva.querySelector(".placeholder_canva")
@@ -777,6 +679,7 @@ function crear_tarjeta ()
     numero_tarjetas++
 
     recargar_html()
+    return tarjeta_nueva
 }
 function eliminar_tarjeta (tarjeta)
 {
@@ -1442,7 +1345,6 @@ function agregar_elementos ()
                 e.stopPropagation()
                 bloque.remove()
                 crear_placeholder_tarjeta()
-                recargar_html()
             })
             bloque.appendChild(btn_eliminar_bloque)
         }
@@ -1533,7 +1435,6 @@ function agregar_elementos ()
                 e.stopPropagation()
                 contenedor_imagen.remove()
                 crear_placeholder_tarjeta()
-                recargar_html()
             })
 
             // Agregar Boton a Contenedor Imagen
@@ -1560,6 +1461,7 @@ function crear_placeholder_tarjeta ()
 
     // Si No Quedan mas Bloques, Eliminar Contenedor Informacion
     if (bloques_restantes == 0 && tarjeta_activa.querySelector(".tarjeta__informacion")) tarjeta_activa.querySelector(".tarjeta__informacion").remove()
+    recargar_html()
 }
 function dragstart_block(e)
 {
